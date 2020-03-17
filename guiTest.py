@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 import threading
 
-from defFonts import *
+from classes import *
 import GPIO_functions
 
 

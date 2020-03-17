@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from defFonts import EPB_status as EPB_status, SB_status as SB_status
+from classes import EPB_status as EPB_status, SB_status as SB_status
 
 
 GPIO.setwarnings(False)

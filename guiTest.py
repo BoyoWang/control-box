@@ -8,30 +8,30 @@ import GPIO_functions
 
 
 def EPB_SB_cmdApply():
-    EPB_cmdCurrIsSame = (EPB_SB_status.EPB_cur == EPB_SB_status.EPB_cmd)
-    SB_cmdCurrIsSame = (EPB_SB_status.SB_cur == EPB_SB_status.SB_cmd)
+    EPB_cmdCurrIsSame = (EPB_SB_cmd_status.EPB_cur == EPB_SB_cmd_status.EPB_cmd)
+    SB_cmdCurrIsSame = (EPB_SB_cmd_status.SB_cur == EPB_SB_cmd_status.SB_cmd)
     if not (EPB_cmdCurrIsSame and SB_cmdCurrIsSame):  # Check if cmd is same as cur
         GPIO_functions.outputChange(
-            EPB_SB_status.EPB_cmd, EPB_SB_status.SB_cmd, EPB_SB_status.EPB_cur, EPB_SB_status.SB_cur)
-        EPB_SB_status.EPB_cur = EPB_SB_status.EPB_cmd
-        EPB_SB_status.SB_cur = EPB_SB_status.SB_cmd
+            EPB_SB_cmd_status.EPB_cmd, EPB_SB_cmd_status.SB_cmd, EPB_SB_cmd_status.EPB_cur, EPB_SB_cmd_status.SB_cur)
+        EPB_SB_cmd_status.EPB_cur = EPB_SB_cmd_status.EPB_cmd
+        EPB_SB_cmd_status.SB_cur = EPB_SB_cmd_status.SB_cmd
 
 
 def manualPowerOn(event):
     if rValueApplyRelease.get() == "Apply":
-        EPB_SB_status.EPB_cmd = EPB_status.EPB_apply
+        EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_apply
         EPB_SB_cmdApply()
         Mfm01_S1f01_EPBonOffButton["text"] = "Applying"
         print("Manually applying...")
     elif rValueApplyRelease.get() == "Release":
-        EPB_SB_status.EPB_cmd = EPB_status.EPB_release
+        EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_release
         EPB_SB_cmdApply()
         Mfm01_S1f01_EPBonOffButton["text"] = "Releasing"
         print("Manually releasing...")
 
 
 def ManualPowerOff(event):
-    EPB_SB_status.EPB_cmd = EPB_status.EPB_off
+    EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_off
     EPB_SB_cmdApply()
     Mfm01_S1f01_EPBonOffButton["text"] = "Off"
     print("Off")
@@ -39,10 +39,10 @@ def ManualPowerOff(event):
 
 def Manual_SB_onOff():
     if SB_rValueApplyRelease.get() == "SB_apply":
-        EPB_SB_status.SB_cmd = SB_status.SB_apply
+        EPB_SB_cmd_status.SB_cmd = SB_status.SB_apply
         EPB_SB_cmdApply()
     else:
-        EPB_SB_status.SB_cmd = SB_status.SB_release
+        EPB_SB_cmd_status.SB_cmd = SB_status.SB_release
         EPB_SB_cmdApply()
 
 
@@ -110,8 +110,8 @@ def Auto_refreshWidgets():
 def Auto_start(event):
 
     def autoStep(time, EPB, SB):
-        EPB_SB_status.EPB_cmd = EPB
-        EPB_SB_status.SB_cmd = SB
+        EPB_SB_cmd_status.EPB_cmd = EPB
+        EPB_SB_cmd_status.SB_cmd = SB
         EPB_SB_cmdApply()
 
         print("step " + str(scriptProgram["currentStep"]) + " : " +
@@ -119,8 +119,8 @@ def Auto_start(event):
         Auto_exitSignal.wait(time)
 
     def autoFinish():
-        EPB_SB_status.EPB_cmd = EPB_status.EPB_off
-        # EPB_SB_status.SB_cmd = SB_status.SB_release
+        EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_off
+        # EPB_SB_cmd_status.SB_cmd = SB_status.SB_release
         EPB_SB_cmdApply()
 
     def combineSteps():

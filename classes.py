@@ -19,14 +19,14 @@ class clsSB_status():
 
 SB_status = clsSB_status()
 
-class clsEPB_SB_status():
+class clsEPB_SB_cmd_status():
     def __init__(self):
         self.EPB_cur = EPB_status.EPB_off
         self.SB_cur = SB_status.SB_release
         self.EPB_cmd = EPB_status.EPB_off
         self.SB_cmd = SB_status.SB_release
 
-EPB_SB_status = clsEPB_SB_status()
+EPB_SB_cmd_status = clsEPB_SB_cmd_status()
 
 class clsAutoStatus():
     def __init__(self):
@@ -34,6 +34,16 @@ class clsAutoStatus():
         self.running = "running"
         self.pause = "pause"
         self.finished = "finished"
+
+AutoStatus = clsAutoStatus()
+
+class clsAuto_cmd_Status():
+    def __init__(self):
+        self.status_cur = AutoStatus.init
+        self.status_cmd = AutoStatus.init
+
+Auto_cmd_Status = clsAuto_cmd_Status()
+
 
 root = Tk()
 

@@ -17,6 +17,19 @@ def EPB_SB_cmdApply():
         EPB_SB_cmd_status.SB_cur = EPB_SB_cmd_status.SB_cmd
 
 
+def Auto_cmdApply():
+    Auto_cmdCurrIsSame = (Auto_cmd_Status.status_cur ==
+                          Auto_cmd_Status.status_cmd)
+    if not (Auto_cmdCurrIsSame):  # Check if cmd is same as cur
+        Auto_cmd_Status.status_cur = Auto_cmd_Status.status_cmd
+        Auto_cmd_StatusIsRunning = (
+            Auto_cmd_Status.status_cmd == AutoStatus.running)
+        Auto_cmd_StatusIsContinuing = (
+            Auto_cmd_Status.status_cmd == AutoStatus.continuing)
+        if (Auto_cmd_StatusIsRunning or Auto_cmd_StatusIsContinuing):
+            Auto_start(None)
+        print("Auto_cmd_Status changed to " + Auto_cmd_Status.status_cur)
+
 def manualPowerOn(event):
     if rValueApplyRelease.get() == "Apply":
         EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_apply
@@ -123,16 +136,25 @@ def Auto_start(event):
         # EPB_SB_cmd_status.SB_cmd = SB_status.SB_release
         EPB_SB_cmdApply()
 
+    def Auto_cur_StatusIsRunningOrContinuing():
+        Auto_cur_StatusIsRunning = (
+            Auto_cmd_Status.status_cur == AutoStatus.running)
+        Auto_cur_StatusIsContinuing = (
+            Auto_cmd_Status.status_cur == AutoStatus.continuing)
+        return (Auto_cur_StatusIsRunning or Auto_cur_StatusIsContinuing)
+
+
     def combineSteps():
         global scriptProgram
         Auto_exitSignal.clear()
         scriptProgram["totalSteps"] = len(scriptProgram["steps"])
-        while scriptProgram["currentCycle"] < scriptProgram["totalCycles"]:
+        # while scriptProgram["currentCycle"] < scriptProgram["totalCycles"]:
+        while (Auto_cur_StatusIsRunningOrContinuing()):
 
             if (scriptProgram["currentStep"] + 1) > scriptProgram["totalSteps"]:
                 scriptProgram["currentStep"] = 0
             if scriptProgram["currentStep"] == 0:
-                scriptProgram["currentCycle"] += 1
+                scriptProgram["currentCycle"] += 1 
 
             startStep = scriptProgram["currentStep"]
             Auto_refreshWidgets()
@@ -145,11 +167,17 @@ def Auto_start(event):
                     Auto_refreshWidgets()
                     autoStep(steps[0], steps[1], steps[2])
 
+            if scriptProgram["currentCycle"] >= scriptProgram["totalCycles"]:
+                Auto_cmd_Status.status_cur = AutoStatus.finished
+
             if Auto_exitSignal.is_set():
                 break
 
+            Auto_cur_StatusIsRunningOrContinuing()
+
         if Auto_exitSignal.is_set():
             print("interrupeted!")
+            Auto_cmd_Status.status_cur = AutoStatus.pause
             autoFinish()
         else:
             autoFinish()
@@ -161,16 +189,38 @@ def Auto_start(event):
     thread.start()
 
 
+def Auto_start_btn(event):
+    if Auto_cmd_Status.status_cur == AutoStatus.pause:
+        Auto_cmd_Status.status_cmd = AutoStatus.continuing
+    elif Auto_cmd_Status.status_cur == AutoStatus.finished:
+        Auto_cmd_Status.status_cmd = AutoStatus.finished
+    else:
+        Auto_cmd_Status.status_cmd = AutoStatus.running
+    Auto_cmdApply()
+    Auto_refreshWidgets()
+
+
 def Auto_quit(event):
     Auto_exitSignal.set()
     print("Stop Buttom Pressed.")
+    Auto_refreshWidgets()
 
 
 def Auto_reset():
     global scriptProgram
-    scriptProgram["currentCycle"] = 0
-    scriptProgram["currentStep"] = 0
-    Auto_refreshWidgets()
+
+    def checkAuto_cur_Status():
+        isInit = (Auto_cmd_Status.status_cur == AutoStatus.init)
+        isPause = (Auto_cmd_Status.status_cur == AutoStatus.pause)
+        isFinished = (Auto_cmd_Status.status_cur == AutoStatus.finished)
+        return(isInit or isPause or isFinished)
+
+    if checkAuto_cur_Status():
+        scriptProgram["currentCycle"] = 0
+        scriptProgram["currentStep"] = 0
+        Auto_cmd_Status.status_cmd = AutoStatus.init
+        Auto_cmdApply()
+        Auto_refreshWidgets()
 
 
 def exitProgram(event):
@@ -229,7 +279,7 @@ Mfm02_S1f02.pack(fill=NONE, side=LEFT)
 Mfm02_S1f02_label = MainLables(Mfm02_S1f02, text="Cycle : 0 / 0")
 Mfm02_S1f02_label.pack(fill=Y)
 Mfm02_S1f02_startRadio = MainRadios(
-    Mfm02_S1f02, text="Start", variable=rValueAutoStartStop, value="start", indicatoron=0, command=lambda: Auto_start(None))
+    Mfm02_S1f02, text="Start", variable=rValueAutoStartStop, value="start", indicatoron=0, command=lambda: Auto_start_btn(None))
 Mfm02_S1f02_stopRadio = MainRadios(
     Mfm02_S1f02, text="Stop", variable=rValueAutoStartStop, value="stop", indicatoron=0, command=lambda: Auto_quit(None))
 Mfm02_S1f02_stopRadio.select()

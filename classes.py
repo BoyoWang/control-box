@@ -33,6 +33,7 @@ class clsAutoStatus():
         self.init = "init"
         self.running = "running"
         self.pause = "pause"
+        self.continuing = "continuing"
         self.finished = "finished"
 
 AutoStatus = clsAutoStatus()

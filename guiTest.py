@@ -97,6 +97,35 @@ def Auto_refreshWidgets():
     Mfm02_S1f01_label["text"] = "Steps : " + \
         str(ScriptInfo.currentStep) + \
         " / " + str(ScriptInfo.totalSteps)
+    
+    isRunning = (
+        (Auto_cmd_Status.status_cur == AutoStatus.running) or 
+        (Auto_cmd_Status.status_cur == AutoStatus.continuing)
+    )
+    
+    def BtnsStatusChange(normalOrDisabled):
+        Nfn01_Mfm01SelectRadio["state"] = normalOrDisabled
+        Nfn01_Mfm02SelectRadio["state"] = normalOrDisabled
+        Nfn01_Mfm03SelectRadio["state"] = normalOrDisabled
+        exitButton["state"] = normalOrDisabled
+        Mfm02_S1f02_resetBtn["state"] = normalOrDisabled
+
+    if isRunning:
+        StartRadioText = "Running"
+
+    elif Auto_cmd_Status.status_cur == AutoStatus.finished:
+        StartRadioText = "Finished"
+    else:
+        StartRadioText = "Start"
+    
+    if isRunning:
+        BtnsStatusChange(DISABLED)
+    else:
+        BtnsStatusChange(NORMAL)
+    
+    Mfm02_S1f02_startRadio["text"] = StartRadioText
+
+
 
 
 def Auto_start(event):
@@ -203,6 +232,9 @@ def Auto_reset():
         Auto_cmd_Status.status_cmd = AutoStatus.init
         Auto_cmdApply()
         Auto_refreshWidgets()
+    
+    Mfm02_S1f02_stopRadio.select()
+    
 
 
 def exitProgram(event):

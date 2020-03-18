@@ -86,38 +86,18 @@ impoortedSteps = [
 ScriptInfo = clsScriptInfo(2, impoortedSteps)
 
 
-def singleStep(time, EPBstatus, SBstatus):
-    return [time, EPBstatus, SBstatus]
-
-
-scriptProgram = {"totalCycles": 1,
-                 "currentCycle": 0,
-                 "totalSteps": 0,
-                 "currentStep": 0,
-                 "steps": [singleStep(0.5, EPB_status.EPB_apply,
-                                      SB_status.SB_apply),
-                           singleStep(0.5, EPB_status.EPB_release,
-                                      SB_status.SB_release),
-                           singleStep(0.5, EPB_status.EPB_off,
-                                      SB_status.SB_apply),
-                           singleStep(0.5, EPB_status.EPB_apply,
-                                      SB_status.SB_release),
-                           singleStep(0.5, EPB_status.EPB_release,
-                                      SB_status.SB_apply)]}
-
-
 Auto_exitSignal = threading.Event()
 
 
 def Auto_refreshWidgets():
-    global scriptProgram
+
     Mfm02_S1f02_label["text"] = "Cycles : " + \
-        str(scriptProgram["currentCycle"]) + \
-        " / " + str(scriptProgram["totalCycles"])
+        str(ScriptInfo.currentCycle) + \
+        " / " + str(ScriptInfo.totalCycles)
 
     Mfm02_S1f01_label["text"] = "Steps : " + \
-        str(scriptProgram["currentStep"]) + \
-        " / " + str(scriptProgram["totalSteps"])
+        str(ScriptInfo.currentStep) + \
+        " / " + str(ScriptInfo.totalSteps)
 
 
 def Auto_start(event):
@@ -127,7 +107,7 @@ def Auto_start(event):
         EPB_SB_cmd_status.SB_cmd = SB
         EPB_SB_cmdApply()
 
-        print("step " + str(scriptProgram["currentStep"]) + " : " +
+        print("step " + str(ScriptInfo.currentStep) + " : " +
               str(time) + " s, " + "EPB : " + EPB + ", SB : " + SB)
         Auto_exitSignal.wait(time)
 
@@ -144,34 +124,34 @@ def Auto_start(event):
         return (Auto_cur_StatusIsRunning or Auto_cur_StatusIsContinuing)
 
     def isLastCycleLastStep():
-        ifLastCycle = (scriptProgram["currentCycle"] == scriptProgram["totalCycles"])
-        ifLastStep = (scriptProgram["currentStep"] == scriptProgram["totalSteps"])        
+        ifLastCycle = (ScriptInfo.currentCycle == ScriptInfo.totalCycles)
+        ifLastStep = (ScriptInfo.currentStep == ScriptInfo.totalSteps)        
         return ifLastCycle and ifLastStep
 
 
     def combineSteps():
-        global scriptProgram
         Auto_exitSignal.clear()
-        scriptProgram["totalSteps"] = len(scriptProgram["steps"])
+        ScriptInfo.totalSteps = len(ScriptInfo.steps)
         while (Auto_cur_StatusIsRunningOrContinuing()):
 
-            if ((scriptProgram["currentStep"] + 1) > scriptProgram["totalSteps"]) and (not isLastCycleLastStep()):
-                scriptProgram["currentStep"] = 0
-            if ((scriptProgram["currentStep"] == 0) and (not isLastCycleLastStep())):
-                scriptProgram["currentCycle"] += 1
+            if not isLastCycleLastStep(): # check if last cycle last step
+                if (ScriptInfo.currentStep + 1) > ScriptInfo.totalSteps:
+                    ScriptInfo.currentStep = 0
+                if ScriptInfo.currentStep == 0:
+                    ScriptInfo.currentCycle += 1
 
-            startStep = scriptProgram["currentStep"]
+            startStep = ScriptInfo.currentStep
             Auto_refreshWidgets()
 
-            for steps in scriptProgram["steps"][startStep:]:
+            for steps in ScriptInfo.steps[startStep:]:
                 if Auto_exitSignal.is_set():
                     break
                 else:
-                    scriptProgram["currentStep"] += 1
+                    ScriptInfo.currentStep += 1
                     Auto_refreshWidgets()
                     autoStep(steps[0], steps[1], steps[2])
 
-            if scriptProgram["currentCycle"] >= scriptProgram["totalCycles"]:
+            if isLastCycleLastStep():
                 Auto_cmd_Status.status_cur = AutoStatus.finished
 
             if Auto_exitSignal.is_set():
@@ -211,7 +191,6 @@ def Auto_quit(event):
 
 
 def Auto_reset():
-    global scriptProgram
 
     def checkAuto_cur_Status():
         isInit = (Auto_cmd_Status.status_cur == AutoStatus.init)
@@ -220,8 +199,8 @@ def Auto_reset():
         return(isInit or isPause or isFinished)
 
     if checkAuto_cur_Status():
-        scriptProgram["currentCycle"] = 0
-        scriptProgram["currentStep"] = 0
+        ScriptInfo.currentCycle = 0
+        ScriptInfo.currentStep = 0
         Auto_cmd_Status.status_cmd = AutoStatus.init
         Auto_cmdApply()
         Auto_refreshWidgets()

@@ -90,7 +90,7 @@ def singleStep(time, EPBstatus, SBstatus):
     return [time, EPBstatus, SBstatus]
 
 
-scriptProgram = {"totalCycles": 2,
+scriptProgram = {"totalCycles": 1,
                  "currentCycle": 0,
                  "totalSteps": 0,
                  "currentStep": 0,
@@ -143,18 +143,22 @@ def Auto_start(event):
             Auto_cmd_Status.status_cur == AutoStatus.continuing)
         return (Auto_cur_StatusIsRunning or Auto_cur_StatusIsContinuing)
 
+    def isLastCycleLastStep():
+        ifLastCycle = (scriptProgram["currentCycle"] == scriptProgram["totalCycles"])
+        ifLastStep = (scriptProgram["currentStep"] == scriptProgram["totalSteps"])        
+        return ifLastCycle and ifLastStep
+
 
     def combineSteps():
         global scriptProgram
         Auto_exitSignal.clear()
         scriptProgram["totalSteps"] = len(scriptProgram["steps"])
-        # while scriptProgram["currentCycle"] < scriptProgram["totalCycles"]:
         while (Auto_cur_StatusIsRunningOrContinuing()):
 
-            if (scriptProgram["currentStep"] + 1) > scriptProgram["totalSteps"]:
+            if ((scriptProgram["currentStep"] + 1) > scriptProgram["totalSteps"]) and (not isLastCycleLastStep()):
                 scriptProgram["currentStep"] = 0
-            if scriptProgram["currentStep"] == 0:
-                scriptProgram["currentCycle"] += 1 
+            if ((scriptProgram["currentStep"] == 0) and (not isLastCycleLastStep())):
+                scriptProgram["currentCycle"] += 1
 
             startStep = scriptProgram["currentStep"]
             Auto_refreshWidgets()

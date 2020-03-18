@@ -17,19 +17,6 @@ def EPB_SB_cmdApply():
         EPB_SB_cmd_status.SB_cur = EPB_SB_cmd_status.SB_cmd
 
 
-def Auto_cmdApply():
-    Auto_cmdCurrIsSame = (Auto_cmd_Status.status_cur ==
-                          Auto_cmd_Status.status_cmd)
-    if not (Auto_cmdCurrIsSame):  # Check if cmd is same as cur
-        Auto_cmd_Status.status_cur = Auto_cmd_Status.status_cmd
-        Auto_cmd_StatusIsRunning = (
-            Auto_cmd_Status.status_cmd == AutoStatus.running)
-        Auto_cmd_StatusIsContinuing = (
-            Auto_cmd_Status.status_cmd == AutoStatus.continuing)
-        if (Auto_cmd_StatusIsRunning or Auto_cmd_StatusIsContinuing):
-            Auto_start(None)
-        print("Auto_cmd_Status changed to " + Auto_cmd_Status.status_cur)
-
 def manualPowerOn(event):
     if rValueApplyRelease.get() == "Apply":
         EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_apply
@@ -87,6 +74,18 @@ ScriptInfo = clsScriptInfo(2, impoortedSteps)
 
 
 Auto_exitSignal = threading.Event()
+def Auto_cmdApply():
+    Auto_cmdCurrIsSame = (Auto_cmd_Status.status_cur ==
+                          Auto_cmd_Status.status_cmd)
+    if not (Auto_cmdCurrIsSame):  # Check if cmd is same as cur
+        Auto_cmd_Status.status_cur = Auto_cmd_Status.status_cmd
+        Auto_cmd_StatusIsRunning = (
+            Auto_cmd_Status.status_cmd == AutoStatus.running)
+        Auto_cmd_StatusIsContinuing = (
+            Auto_cmd_Status.status_cmd == AutoStatus.continuing)
+        if (Auto_cmd_StatusIsRunning or Auto_cmd_StatusIsContinuing):
+            Auto_start(None)
+        print("Auto_cmd_Status changed to " + Auto_cmd_Status.status_cur)
 
 
 def Auto_refreshWidgets():

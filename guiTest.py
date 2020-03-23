@@ -4,7 +4,8 @@ from time import sleep
 import threading
 
 from classes import *
-import GPIO_functions
+import GPIO_functions as GPIO_functions
+import jsonHandle as jsonHandle
 
 
 def EPB_SB_cmdApply():
@@ -63,14 +64,14 @@ class clsScriptInfo():
         self.currentStep = 0
 
 
-impoortedSteps = [
-    [0.5, "EPB_apply", "SB_apply"],
-    [0.5, "EPB_release", "SB_release"],
-    [0.5, "EPB_off", "SB_apply"],
-    [0.5, "EPB_apply", "SB_release"],
-    [0.5, "EPB_release", "SB_apply"]
-]
-ScriptInfo = clsScriptInfo(2, impoortedSteps)
+impoortedSteps = jsonHandle.loadScript()
+
+ScriptInfo = clsScriptInfo(
+    impoortedSteps['totalCycles'], 
+    impoortedSteps['steps']
+)
+
+print(ScriptInfo)
 
 
 Auto_exitSignal = threading.Event()

@@ -1,0 +1,30 @@
+{
+  "totalCycles": 2,
+  "steps": [
+    [
+      0.5,
+      "EPB_apply",
+      "SB_apply"
+    ],
+    [
+      0.5,
+      "EPB_release",
+      "SB_release"
+    ],
+    [
+      0.5,
+      "EPB_off",
+      "SB_apply"
+    ],
+    [
+      0.5,
+      "EPB_apply",
+      "SB_release"
+    ],
+    [
+      0.5,
+      "EPB_release",
+      "SB_apply"
+    ]
+  ]
+}

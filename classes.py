@@ -54,7 +54,7 @@ btnFont = tkFont.Font(family='Helvetica', size=20, weight='bold')
 radioFont = tkFont.Font(family='Helvetica', size=18, weight='bold')
 nfnRadioFont = tkFont.Font(family='Helvetica', size=10, weight='bold')
 labelFont = tkFont.Font(family='Helvetica', size=18, weight='bold')
-listboxFont = tkFont.Font(family='Helvetica', size=10, weight='bold')
+listboxFont = tkFont.Font(family='Helvetica', size=8)
 
 
 rValueApplyRelease = StringVar()

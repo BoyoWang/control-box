@@ -7,6 +7,22 @@ from classes import *
 import GPIO_functions as GPIO_functions
 import jsonHandle as jsonHandle
 
+# General functions
+
+def readScriptToListboxes():
+    lb02 = Mfm02_S1f01_listbox
+    lb03 = Mfm03_S1f02_S2f01_listbox
+    for index, step in enumerate(ScriptInfo.steps):
+        text = (
+            str(index + 1) + ". " +
+            step[1] + ", " +
+            step[2]
+        )
+        lb02.insert(END, text)
+        lb03.insert(END, text)
+
+
+# Manual functions
 
 def EPB_SB_cmdApply():
     EPB_cmdCurrIsSame = (EPB_SB_cmd_status.EPB_cur == EPB_SB_cmd_status.EPB_cmd)
@@ -438,5 +454,8 @@ exitButton = Button(root, text="Exit", font=myFont, height=2, width=6)
 exitButton.bind('<Button-1>', exitProgram)
 exitButton.pack(side=BOTTOM)
 
+
+# functions to execute after windows is loaded
+resdScriptToListboxes()
 
 root.mainloop()

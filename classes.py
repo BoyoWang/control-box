@@ -49,7 +49,7 @@ Auto_cmd_Status = clsAuto_cmd_Status()
 root = Tk()
 
 
-myFont = tkFont.Font(family='Helvetica', size=36, weight='bold')
+myFont = tkFont.Font(family='Helvetica', size=20, weight='bold')
 btnFont = tkFont.Font(family='Helvetica', size=20, weight='bold')
 radioFont = tkFont.Font(family='Helvetica', size=18, weight='bold')
 nfnRadioFont = tkFont.Font(family='Helvetica', size=10, weight='bold')

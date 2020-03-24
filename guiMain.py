@@ -44,8 +44,6 @@ def readScriptToListboxes():
         lb03.insert(END, text)
     
 
-
-
 # Manual functions
 
 def EPB_SB_cmdApply():
@@ -104,17 +102,9 @@ class clsScriptInfo():
         self.currentStep = 0
 
 
-impoortedSteps = jsonHandle.loadScript()
-
-ScriptInfo = clsScriptInfo(
-    impoortedSteps['totalCycles'], 
-    impoortedSteps['steps']
-)
-
-print(ScriptInfo)
-
-
 Auto_exitSignal = threading.Event()
+
+
 def Auto_cmdApply():
     Auto_cmdCurrIsSame = (Auto_cmd_Status.status_cur ==
                           Auto_cmd_Status.status_cmd)
@@ -167,8 +157,6 @@ def Auto_refreshWidgets():
     Mfm02_S1f02_startRadio["text"] = StartRadioText
     Mfm02_S1f01_listbox.selection_clear(0,END)
     Mfm02_S1f01_listbox.selection_set(ScriptInfo.currentStep)
-
-
 
 
 def Auto_start(event):
@@ -277,7 +265,6 @@ def Auto_reset():
         Auto_refreshWidgets()
     
     Mfm02_S1f02_stopRadio.select()
-    
 
 
 def exitProgram(event):
@@ -482,6 +469,13 @@ exitButton.pack(side=BOTTOM)
 
 
 # functions to execute after windows is loaded
+impoortedSteps = jsonHandle.loadScript()
+
+ScriptInfo = clsScriptInfo(
+    impoortedSteps['totalCycles'], 
+    impoortedSteps['steps']
+)
+
 readScriptToListboxes()
 
 root.mainloop()

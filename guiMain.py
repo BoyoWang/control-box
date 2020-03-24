@@ -10,16 +10,40 @@ import jsonHandle as jsonHandle
 # General functions
 
 def readScriptToListboxes():
+
+    def EPB_statusTrans(statusInput):
+        if statusInput == EPB_status.EPB_apply:
+            return " + "
+        elif statusInput == EPB_status.EPB_release:
+            return " - "
+        elif statusInput == EPB_status.EPB_off:
+            return "OFF"
+
+    def SB_statusTrans(statusInput):
+        if statusInput == SB_status.SB_apply:
+            return " + "
+        elif statusInput == SB_status.SB_release:
+            return " - "
+    
     lb02 = Mfm02_S1f01_listbox
     lb03 = Mfm03_S1f02_S2f01_listbox
+
+    headerText = "ID|EPB|SB |T"
+
+    lb02.insert(END, headerText)
+    lb03.insert(END, headerText)
+
     for index, step in enumerate(ScriptInfo.steps):
         text = (
-            str(index + 1) + ". " +
-            step[1] + ", " +
-            step[2]
+            str(index + 1) + ".|" +
+            EPB_statusTrans(step[1]) + "|" +
+            SB_statusTrans(step[2]) + "|" +
+            str(step[0]) + "s"
         )
         lb02.insert(END, text)
         lb03.insert(END, text)
+    
+
 
 
 # Manual functions
@@ -141,6 +165,8 @@ def Auto_refreshWidgets():
         BtnsStatusChange(NORMAL)
     
     Mfm02_S1f02_startRadio["text"] = StartRadioText
+    Mfm02_S1f01_listbox.selection_clear(0,END)
+    Mfm02_S1f01_listbox.selection_set(ScriptInfo.currentStep)
 
 
 
@@ -456,6 +482,6 @@ exitButton.pack(side=BOTTOM)
 
 
 # functions to execute after windows is loaded
-resdScriptToListboxes()
+readScriptToListboxes()
 
 root.mainloop()

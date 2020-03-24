@@ -51,7 +51,11 @@ def EPB_SB_cmdApply():
     SB_cmdCurrIsSame = (EPB_SB_cmd_status.SB_cur == EPB_SB_cmd_status.SB_cmd)
     if not (EPB_cmdCurrIsSame and SB_cmdCurrIsSame):  # Check if cmd is same as cur
         GPIO_functions.outputChange(
-            EPB_SB_cmd_status.EPB_cmd, EPB_SB_cmd_status.SB_cmd, EPB_SB_cmd_status.EPB_cur, EPB_SB_cmd_status.SB_cur)
+            EPB_SB_cmd_status.EPB_cmd, 
+            EPB_SB_cmd_status.SB_cmd, 
+            EPB_SB_cmd_status.EPB_cur, 
+            EPB_SB_cmd_status.SB_cur
+        )
         EPB_SB_cmd_status.EPB_cur = EPB_SB_cmd_status.EPB_cmd
         EPB_SB_cmd_status.SB_cur = EPB_SB_cmd_status.SB_cmd
 
@@ -273,6 +277,9 @@ def exitProgram(event):
     # GPIO.cleanup()
     root.quit()
 
+# script functions
+
+
 
 root.title("Brake Control System")
 
@@ -303,9 +310,13 @@ Mfm01_S1f02 = SubFrames1(Mfm01)
 Mfm01_S1f02_applyReleaseLable = MainLables(
     Mfm01_S1f02, text="Service brake apply / release:")
 Mfm01_S1f02_SB_applyRadio = MainRadios(
-    Mfm01_S1f02, text="SB_apply", variable=SB_rValueApplyRelease, value="SB_apply", command=Manual_SB_onOff)
+    Mfm01_S1f02, text="SB_apply", 
+    variable=SB_rValueApplyRelease, value="SB_apply", 
+    command=Manual_SB_onOff)
 Mfm01_S1f02_SB_releaseRadio = MainRadios(
-    Mfm01_S1f02, text="SB_release", variable=SB_rValueApplyRelease, value="SB_release", command=Manual_SB_onOff)
+    Mfm01_S1f02, text="SB_release", 
+    variable=SB_rValueApplyRelease, value="SB_release", 
+    command=Manual_SB_onOff)
 Mfm01_S1f02_SB_releaseRadio.select()
 
 # MainFrame 02 : Automatic control
@@ -323,9 +334,15 @@ Mfm02_S1f02.pack(fill=NONE, side=LEFT)
 Mfm02_S1f02_label = MainLables(Mfm02_S1f02, text="Cycle : 0 / 0")
 Mfm02_S1f02_label.pack(fill=Y)
 Mfm02_S1f02_startRadio = MainRadios(
-    Mfm02_S1f02, text="Start", variable=rValueAutoStartStop, value="start", indicatoron=0, command=lambda: Auto_start_btn(None))
+    Mfm02_S1f02, text="Start", variable=rValueAutoStartStop, 
+    value="start", indicatoron=0, 
+    command=lambda: Auto_start_btn(None)
+)
 Mfm02_S1f02_stopRadio = MainRadios(
-    Mfm02_S1f02, text="Stop", variable=rValueAutoStartStop, value="stop", indicatoron=0, command=lambda: Auto_quit(None))
+    Mfm02_S1f02, text="Stop", variable=rValueAutoStartStop, 
+    value="stop", indicatoron=0, 
+    command=lambda: Auto_quit(None)
+)
 Mfm02_S1f02_stopRadio.select()
 Mfm02_S1f02_resetBtn = MainButtons(
     Mfm02_S1f02, text="Reset", command=Auto_reset)
@@ -358,11 +375,14 @@ Mfm03_S1f02_S2f02_S3f01_label = MainLables(
 Mfm03_S1f02_S2f02_S3f01_S4f01 = SubFrames4(Mfm03_S1f02_S2f02_S3f01)
 
 Mfm03_S1f02_S2f02_S3f01_S4f01_100Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="100", variable=rValueFrm0302020101, value=100)
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="100", 
+    variable=rValueFrm0302020101, value=100)
 Mfm03_S1f02_S2f02_S3f01_S4f01_10Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="10", variable=rValueFrm0302020101, value=10)
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="10", 
+    variable=rValueFrm0302020101, value=10)
 Mfm03_S1f02_S2f02_S3f01_S4f01_1Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="1", variable=rValueFrm0302020101, value=1)
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="1", 
+    variable=rValueFrm0302020101, value=1)
 
 Mfm03_S1f02_S2f02_S3f01_S4f01_plusBtn = Button(
     Mfm03_S1f02_S2f02_S3f01_S4f01, text="+")
@@ -386,15 +406,20 @@ Mfm03_S1f02_S2f02_S3f02_label = MainLables(
 Mfm03_S1f02_S2f02_S3f02_S4f01 = SubFrames4(Mfm03_S1f02_S2f02_S3f02)
 
 Mfm03_S1f02_S2f02_S3f02_S4f01_100Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="100", variable=rValueFrm0302020201, value=100)
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="100", 
+    variable=rValueFrm0302020201, value=100)
 Mfm03_S1f02_S2f02_S3f02_S4f01_10Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="10", variable=rValueFrm0302020201, value=10)
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="10", 
+    variable=rValueFrm0302020201, value=10)
 Mfm03_S1f02_S2f02_S3f02_S4f01_1Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="1", variable=rValueFrm0302020201, value=1)
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="1", 
+    variable=rValueFrm0302020201, value=1)
 Mfm03_S1f02_S2f02_S3f02_S4f01_01Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="0.1", variable=rValueFrm0302020201, value=0.1)
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="0.1", 
+    variable=rValueFrm0302020201, value=0.1)
 Mfm03_S1f02_S2f02_S3f02_S4f01_001Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="0.01", variable=rValueFrm0302020201, value=0.01)
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="0.01", 
+    variable=rValueFrm0302020201, value=0.01)
 
 Mfm03_S1f02_S2f02_S3f02_S4f01_plusBtn = Button(
     Mfm03_S1f02_S2f02_S3f02_S4f01, text="+")
@@ -412,22 +437,28 @@ Mfm03_S1f02_S2f02_S3f02_S4f01_plusBtn.grid(row=2, column=1)
 Mfm03_S1f02_S2f02_S3f02_S4f01_resetBtn.grid(row=2, column=2)
 Mfm03_S1f02_S2f02_S3f02_S4f01_minusBtn.grid(row=2, column=3)
 
-# MainFrame 03 - SubFrames1 02 - SubFrames2 02 - SubFrames3 03 : EPB / SB status selector
+# MainFrame 03 - SubFrames1 02 - SubFrames2 02 - SubFrames3 03 : 
+# EPB / SB status selector
 Mfm03_S1f02_S2f02_S3f03 = SubFrames3(Mfm03_S1f02_S2f02)
 Mfm03_S1f02_S2f02_S3f03_EPBLabel = Label(Mfm03_S1f02_S2f02_S3f03, text="EPB :")
 Mfm03_S1f02_S2f02_S3f03_EPBApplyRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Apply", variable=rValueFrm03020203_1, value="apply")
+    Mfm03_S1f02_S2f02_S3f03, text="Apply", 
+    variable=rValueFrm03020203_1, value="apply")
 Mfm03_S1f02_S2f02_S3f03_EPBReleaseRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Release", variable=rValueFrm03020203_1, value="release")
+    Mfm03_S1f02_S2f02_S3f03, text="Release", 
+    variable=rValueFrm03020203_1, value="release")
 Mfm03_S1f02_S2f02_S3f03_EPBOffRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Off", variable=rValueFrm03020203_1, value="off")
+    Mfm03_S1f02_S2f02_S3f03, text="Off", 
+    variable=rValueFrm03020203_1, value="off")
 Mfm03_S1f02_S2f02_S3f03_EPBOffRadio.select()
 
 Mfm03_S1f02_S2f02_S3f03_SBLabel = Label(Mfm03_S1f02_S2f02_S3f03, text="SB :")
 Mfm03_S1f02_S2f02_S3f03_SBApplyRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Apply", variable=rValueFrm03020203_2, value="apply")
+    Mfm03_S1f02_S2f02_S3f03, text="Apply", 
+    variable=rValueFrm03020203_2, value="apply")
 Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Release", variable=rValueFrm03020203_2, value="release")
+    Mfm03_S1f02_S2f02_S3f03, text="Release", 
+    variable=rValueFrm03020203_2, value="release")
 Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio.select()
 
 Mfm03_S1f02_S2f02_S3f03_EPBLabel.grid(row=1, column=1)
@@ -439,7 +470,8 @@ Mfm03_S1f02_S2f02_S3f03_SBLabel.grid(row=2, column=1)
 Mfm03_S1f02_S2f02_S3f03_SBApplyRadio.grid(row=2, column=2)
 Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio.grid(row=2, column=3)
 
-# MainFrame 03 - SubFrames1 02 - SubFrames2 02 - SubFrames3 04 : add / delete step
+# MainFrame 03 - SubFrames1 02 - SubFrames2 02 - SubFrames3 04 : 
+# add / delete step
 Mfm03_S1f02_S2f02_S3f04 = SubFrames3(Mfm03_S1f02_S2f02)
 Mfm03_S1f02_S2f02_S3f04_addBtn = MainButtons(
     Mfm03_S1f02_S2f02_S3f04, text="Add")
@@ -454,11 +486,14 @@ Mfm02.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 Mfm03.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 
 Nfn01_Mfm01SelectRadio = NfnRadios(
-    Nfn01, text="Manual", variable=MfmSelection, value="Mfm01", command=Mfm01.lift)
+    Nfn01, text="Manual", 
+    variable=MfmSelection, value="Mfm01", command=Mfm01.lift)
 Nfn01_Mfm02SelectRadio = NfnRadios(
-    Nfn01, text="Automatic", variable=MfmSelection, value="Mfm02", command=Mfm02.lift)
+    Nfn01, text="Automatic", 
+    variable=MfmSelection, value="Mfm02", command=Mfm02.lift)
 Nfn01_Mfm03SelectRadio = NfnRadios(
-    Nfn01, text="Script", variable=MfmSelection, value="Mfm03", command=Mfm03.lift)
+    Nfn01, text="Script", 
+    variable=MfmSelection, value="Mfm03", command=Mfm03.lift)
 Nfn01_Mfm01SelectRadio.select()
 
 Mfm01.show()
@@ -470,6 +505,7 @@ exitButton.pack(side=BOTTOM)
 
 # functions to execute after windows is loaded
 impoortedSteps = jsonHandle.loadScript()
+scriptTemp = impoortedSteps.copy()
 
 ScriptInfo = clsScriptInfo(
     impoortedSteps['totalCycles'], 

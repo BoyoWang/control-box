@@ -17,5 +17,6 @@ def loadScript():
 #     ]
 # }
 
-# with open('script.json', 'w') as f:
-#     json.dump(impoortedSteps, f, indent=2)
+def saveScript(scriptDict):
+    with open('script.json', 'w') as f:
+        json.dump(scriptDict, f, indent=2)

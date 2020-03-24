@@ -9,7 +9,7 @@ import jsonHandle as jsonHandle
 
 # General functions
 
-def readScriptToListboxes():
+def readScriptToListbox(listbox, steps):
 
     def EPB_statusTrans(statusInput):
         if statusInput == EPB_status.EPB_apply:
@@ -25,24 +25,23 @@ def readScriptToListboxes():
         elif statusInput == SB_status.SB_release:
             return " - "
     
-    lb02 = Mfm02_S1f01_listbox
-    lb03 = Mfm03_S1f02_S2f01_listbox
-
+    
     headerText = "ID|EPB|SB |T"
 
-    lb02.insert(END, headerText)
-    lb03.insert(END, headerText)
+    listbox.insert(END, headerText)
 
-    for index, step in enumerate(ScriptInfo.steps):
+    for index, step in enumerate(steps):
         text = (
             str(index + 1) + ".|" +
             EPB_statusTrans(step[1]) + "|" +
             SB_statusTrans(step[2]) + "|" +
             str(step[0]) + "s"
         )
-        lb02.insert(END, text)
-        lb03.insert(END, text)
-    
+        listbox.insert(END, text)
+
+
+def clearListBox(listbox):
+    listbox.delete(0, END)
 
 # Manual functions
 
@@ -279,6 +278,30 @@ def exitProgram(event):
 
 # script functions
 
+def Script_read():
+    global scriptTemp
+    scriptTemp = jsonHandle.loadScript()
+    clearListBox(Mfm03_S1f02_S2f01_listbox)
+    readScriptToListbox(Mfm03_S1f02_S2f01_listbox, scriptTemp["steps"])
+
+def Script_clear():
+    global scriptTemp
+    scriptTemp['totalCycles'] = 1
+    scriptTemp['steps'] = [[0.5, EPB_status.EPB_off, SB_status.SB_release]]
+    clearListBox(Mfm03_S1f02_S2f01_listbox)
+    readScriptToListbox(Mfm03_S1f02_S2f01_listbox, scriptTemp["steps"])
+
+def Script_save():
+    print("")
+
+
+def Script_addStep():
+    global scriptTemp
+    tempList = []
+    tempList = scriptTemp['steps']
+    tempList.append([0.5, EPB_status.EPB_release, SB_status.SB_release])
+    clearListBox(Mfm03_S1f02_S2f01_listbox)
+    readScriptToListbox(Mfm03_S1f02_S2f01_listbox, scriptTemp["steps"])
 
 
 root.title("Brake Control System")
@@ -352,9 +375,12 @@ Mfm03 = MainFrames(root)
 
 # MainFrame 03 - SubFrames1 01 : Read / Clear / Save
 Mfm03_S1f01 = SubFrames1(Mfm03)
-Mfm03_S1f01_readButton = MainButtons(Mfm03_S1f01, text="Read")
-Mfm03_S1f01_clearButton = MainButtons(Mfm03_S1f01, text="Clear")
-Mfm03_S1f01_saveButton = MainButtons(Mfm03_S1f01, text="Save")
+Mfm03_S1f01_readButton = MainButtons(Mfm03_S1f01, text="Read", 
+    command=Script_read)
+Mfm03_S1f01_clearButton = MainButtons(Mfm03_S1f01, text="Clear", 
+    command=Script_clear)
+Mfm03_S1f01_saveButton = MainButtons(Mfm03_S1f01, text="Save", 
+    command=Script_save)
 
 # MainFrame 03 - SubFrames1 02 : Script Editor Main
 Mfm03_S1f02 = SubFrames1(Mfm03)
@@ -474,7 +500,7 @@ Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio.grid(row=2, column=3)
 # add / delete step
 Mfm03_S1f02_S2f02_S3f04 = SubFrames3(Mfm03_S1f02_S2f02)
 Mfm03_S1f02_S2f02_S3f04_addBtn = MainButtons(
-    Mfm03_S1f02_S2f02_S3f04, text="Add")
+    Mfm03_S1f02_S2f02_S3f04, text="Add", command=Script_addStep)
 Mfm03_S1f02_S2f02_S3f04_deleteBtn = MainButtons(
     Mfm03_S1f02_S2f02_S3f04, text="delete")
 
@@ -512,6 +538,7 @@ ScriptInfo = clsScriptInfo(
     impoortedSteps['steps']
 )
 
-readScriptToListboxes()
+readScriptToListbox(Mfm02_S1f01_listbox, impoortedSteps["steps"])
+readScriptToListbox(Mfm03_S1f02_S2f01_listbox, scriptTemp["steps"])
 
 root.mainloop()

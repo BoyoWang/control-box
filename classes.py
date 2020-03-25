@@ -49,7 +49,7 @@ class clsScript_editStatus():
     def __init__(self):
         self.totalCycles = 1
         self.EPB_status = glbEPB_status.EPB_off
-        self.glbSB_status = glbSB_status.SB_release
+        self.SB_status = glbSB_status.SB_release
         self.stepTime = 0.5
         self.script = {
             "totalCycles": 1,

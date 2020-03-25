@@ -26,7 +26,7 @@ class clsEPB_SB_cmd_status():
         self.EPB_cmd = glbEPB_status.EPB_off
         self.SB_cmd = glbSB_status.SB_release
 
-EPB_SB_cmd_status = clsEPB_SB_cmd_status()
+glbEPB_SB_cmd_status = clsEPB_SB_cmd_status()
 
 class clsAutoStatus():
     def __init__(self):

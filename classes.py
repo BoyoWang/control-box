@@ -36,12 +36,12 @@ class clsAutoStatus():
         self.continuing = "continuing"
         self.finished = "finished"
 
-AutoStatus = clsAutoStatus()
+glbAutoStatus = clsAutoStatus()
 
 class clsAuto_cmd_Status():
     def __init__(self):
-        self.status_cur = AutoStatus.init
-        self.status_cmd = AutoStatus.init
+        self.status_cur = glbAutoStatus.init
+        self.status_cmd = glbAutoStatus.init
 
 Auto_cmd_Status = clsAuto_cmd_Status()
 

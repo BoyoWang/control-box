@@ -352,9 +352,11 @@ def Script_timeModBtns(mode):
 
 def Script_addStep():
     global Script_editStatus, glbEPB_status
-    tempList = []
+    stepTime = Script_editStatus.stepTime
+    EPB = rValueFrm03020203_1.get()
+    SB = rValueFrm03020203_2.get()
     tempList = Script_editStatus.script['steps']
-    tempList.append([0.5, glbEPB_status.EPB_release, glbSB_status.SB_release])
+    tempList.append([stepTime, EPB, SB])
     Script_refreshWidgets()
 
 
@@ -531,22 +533,22 @@ Mfm03_S1f02_S2f02_S3f03 = SubFrames3(Mfm03_S1f02_S2f02)
 Mfm03_S1f02_S2f02_S3f03_EPBLabel = Label(Mfm03_S1f02_S2f02_S3f03, text="EPB :")
 Mfm03_S1f02_S2f02_S3f03_EPBApplyRadio = Radiobutton(
     Mfm03_S1f02_S2f02_S3f03, text="Apply", 
-    variable=rValueFrm03020203_1, value="apply")
+    variable=rValueFrm03020203_1, value=glbEPB_status.EPB_apply)
 Mfm03_S1f02_S2f02_S3f03_EPBReleaseRadio = Radiobutton(
     Mfm03_S1f02_S2f02_S3f03, text="Release", 
-    variable=rValueFrm03020203_1, value="release")
+    variable=rValueFrm03020203_1, value=glbEPB_status.EPB_release)
 Mfm03_S1f02_S2f02_S3f03_EPBOffRadio = Radiobutton(
     Mfm03_S1f02_S2f02_S3f03, text="Off", 
-    variable=rValueFrm03020203_1, value="off")
+    variable=rValueFrm03020203_1, value=glbEPB_status.EPB_off)
 Mfm03_S1f02_S2f02_S3f03_EPBOffRadio.select()
 
 Mfm03_S1f02_S2f02_S3f03_SBLabel = Label(Mfm03_S1f02_S2f02_S3f03, text="SB :")
 Mfm03_S1f02_S2f02_S3f03_SBApplyRadio = Radiobutton(
     Mfm03_S1f02_S2f02_S3f03, text="Apply", 
-    variable=rValueFrm03020203_2, value="apply")
+    variable=rValueFrm03020203_2, value=glbSB_status.SB_apply)
 Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio = Radiobutton(
     Mfm03_S1f02_S2f02_S3f03, text="Release", 
-    variable=rValueFrm03020203_2, value="release")
+    variable=rValueFrm03020203_2, value=glbSB_status.SB_release)
 Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio.select()
 
 Mfm03_S1f02_S2f02_S3f03_EPBLabel.grid(row=1, column=1)

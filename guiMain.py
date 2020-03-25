@@ -316,6 +316,22 @@ def Script_clear():
 def Script_save():
     print("")
 
+def Script_cycleModBtns(mode):
+    global Script_editStatus, rValueFrm0302020101
+    temp = rValueFrm0302020101.get()
+    
+    if mode == "plus":
+        Script_editStatus.totalCycles += temp
+    elif mode == "minus":
+        Script_editStatus.totalCycles -= temp
+    elif mode == "reset":
+        Script_editStatus.totalCycles = 1
+
+    if Script_editStatus.totalCycles < 1:
+        Script_editStatus.totalCycles = 1
+
+    Script_refreshWidgets()
+
 
 def Script_addStep():
     global Script_editStatus, glbEPB_status
@@ -423,20 +439,23 @@ Mfm03_S1f02_S2f02_S3f01_S4f01 = SubFrames4(Mfm03_S1f02_S2f02_S3f01)
 
 Mfm03_S1f02_S2f02_S3f01_S4f01_100Radio = Radiobutton(
     Mfm03_S1f02_S2f02_S3f01_S4f01, text="100", 
-    variable=rValueFrm0302020101, value=100)
+    variable=rValueFrm0302020101, value="100")
 Mfm03_S1f02_S2f02_S3f01_S4f01_10Radio = Radiobutton(
     Mfm03_S1f02_S2f02_S3f01_S4f01, text="10", 
-    variable=rValueFrm0302020101, value=10)
+    variable=rValueFrm0302020101, value="10")
 Mfm03_S1f02_S2f02_S3f01_S4f01_1Radio = Radiobutton(
     Mfm03_S1f02_S2f02_S3f01_S4f01, text="1", 
-    variable=rValueFrm0302020101, value=1)
+    variable=rValueFrm0302020101, value="1")
 
 Mfm03_S1f02_S2f02_S3f01_S4f01_plusBtn = Button(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="+")
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="+",
+    command=lambda: Script_cycleModBtns('plus'))
 Mfm03_S1f02_S2f02_S3f01_S4f01_resetBtn = Button(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="Reset")
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="Reset",
+    command=lambda: Script_cycleModBtns('reset'))
 Mfm03_S1f02_S2f02_S3f01_S4f01_minusBtn = Button(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="-")
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="-",
+    command=lambda: Script_cycleModBtns('minus'))
 
 Mfm03_S1f02_S2f02_S3f01_S4f01_100Radio.grid(row=1, column=1)
 Mfm03_S1f02_S2f02_S3f01_S4f01_10Radio.grid(row=1, column=2)

@@ -12,17 +12,17 @@ import jsonHandle as jsonHandle
 def readScriptToListbox(listbox, steps):
 
     def EPB_statusTrans(statusInput):
-        if statusInput == EPB_status.EPB_apply:
+        if statusInput == glbEPB_status.EPB_apply:
             return " + "
-        elif statusInput == EPB_status.EPB_release:
+        elif statusInput == glbEPB_status.EPB_release:
             return " - "
-        elif statusInput == EPB_status.EPB_off:
+        elif statusInput == glbEPB_status.EPB_off:
             return "OFF"
 
     def SB_statusTrans(statusInput):
-        if statusInput == SB_status.SB_apply:
+        if statusInput == glbSB_status.SB_apply:
             return " + "
-        elif statusInput == SB_status.SB_release:
+        elif statusInput == glbSB_status.SB_release:
             return " - "
     
     
@@ -43,6 +43,13 @@ def readScriptToListbox(listbox, steps):
 def clearListBox(listbox):
     listbox.delete(0, END)
 
+
+def exitProgram(event):
+    print("Exit Button pressed")
+    GPIO_functions.cleanup()
+    # GPIO.cleanup()
+    root.quit()
+
 # Manual functions
 
 def EPB_SB_cmdApply():
@@ -61,19 +68,19 @@ def EPB_SB_cmdApply():
 
 def manualPowerOn(event):
     if rValueApplyRelease.get() == "Apply":
-        EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_apply
+        EPB_SB_cmd_status.EPB_cmd = glbEPB_status.EPB_apply
         EPB_SB_cmdApply()
         Mfm01_S1f01_EPBonOffButton["text"] = "Applying"
         print("Manually applying...")
     elif rValueApplyRelease.get() == "Release":
-        EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_release
+        EPB_SB_cmd_status.EPB_cmd = glbEPB_status.EPB_release
         EPB_SB_cmdApply()
         Mfm01_S1f01_EPBonOffButton["text"] = "Releasing"
         print("Manually releasing...")
 
 
 def ManualPowerOff(event):
-    EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_off
+    EPB_SB_cmd_status.EPB_cmd = glbEPB_status.EPB_off
     EPB_SB_cmdApply()
     Mfm01_S1f01_EPBonOffButton["text"] = "Off"
     print("Off")
@@ -81,10 +88,10 @@ def ManualPowerOff(event):
 
 def Manual_SB_onOff():
     if SB_rValueApplyRelease.get() == "SB_apply":
-        EPB_SB_cmd_status.SB_cmd = SB_status.SB_apply
+        EPB_SB_cmd_status.SB_cmd = glbSB_status.SB_apply
         EPB_SB_cmdApply()
     else:
-        EPB_SB_cmd_status.SB_cmd = SB_status.SB_release
+        EPB_SB_cmd_status.SB_cmd = glbSB_status.SB_release
         EPB_SB_cmdApply()
 
 
@@ -95,8 +102,8 @@ class clsScriptInfo():
                  totalCycles=1,
                  importedSteps=[[
                      0.5,
-                     EPB_status.EPB_off,
-                     SB_status.SB_release
+                     glbEPB_status.EPB_off,
+                     glbSB_status.SB_release
                  ]]):
         self.totalCycles = totalCycles
         self.totalSteps = len(importedSteps)
@@ -158,6 +165,8 @@ def Auto_refreshWidgets():
         BtnsStatusChange(NORMAL)
     
     Mfm02_S1f02_startRadio["text"] = StartRadioText
+    clearListBox(Mfm02_S1f01_listbox)
+    readScriptToListbox(Mfm02_S1f01_listbox, ScriptInfo.steps)
     Mfm02_S1f01_listbox.selection_clear(0,END)
     Mfm02_S1f01_listbox.selection_set(ScriptInfo.currentStep)
 
@@ -174,8 +183,8 @@ def Auto_start(event):
         Auto_exitSignal.wait(time)
 
     def autoFinish():
-        EPB_SB_cmd_status.EPB_cmd = EPB_status.EPB_off
-        # EPB_SB_cmd_status.SB_cmd = SB_status.SB_release
+        EPB_SB_cmd_status.EPB_cmd = glbEPB_status.EPB_off
+        # EPB_SB_cmd_status.SB_cmd = glbSB_status.SB_release
         EPB_SB_cmdApply()
 
     def Auto_cur_StatusIsRunningOrContinuing():
@@ -269,39 +278,53 @@ def Auto_reset():
     
     Mfm02_S1f02_stopRadio.select()
 
-
-def exitProgram(event):
-    print("Exit Button pressed")
-    GPIO_functions.cleanup()
-    # GPIO.cleanup()
-    root.quit()
-
 # script functions
 
-def Script_read():
-    global scriptTemp
-    scriptTemp = jsonHandle.loadScript()
+def Script_refreshWidgets():
+    global Script_editStatus,\
+        Mfm03_S1f02_S2f02_S3f01_label,\
+        Mfm03_S1f02_S2f02_S3f02_label,\
+        Mfm02_S1f01_listbox
+
+    Mfm03_S1f02_S2f02_S3f01_label['text'] = "Cycle : " + \
+        str(Script_editStatus.totalCycles)
+    
+    Mfm03_S1f02_S2f02_S3f02_label['text'] = "Time : " + \
+        str(Script_editStatus.stepTime) + " s"
+
     clearListBox(Mfm03_S1f02_S2f01_listbox)
-    readScriptToListbox(Mfm03_S1f02_S2f01_listbox, scriptTemp["steps"])
+    readScriptToListbox(Mfm03_S1f02_S2f01_listbox, Script_editStatus.script["steps"])
+
+    
+def Script_read():
+    global Script_editStatus, Mfm03_S1f02_S2f01_listbox
+    Script_editStatus.script = jsonHandle.loadScript()
+    Script_editStatus.totalCycles = Script_editStatus.script['totalCycles']
+    clearListBox(Mfm03_S1f02_S2f01_listbox)
+    Script_refreshWidgets()
 
 def Script_clear():
-    global scriptTemp
-    scriptTemp['totalCycles'] = 1
-    scriptTemp['steps'] = [[0.5, EPB_status.EPB_off, SB_status.SB_release]]
-    clearListBox(Mfm03_S1f02_S2f01_listbox)
-    readScriptToListbox(Mfm03_S1f02_S2f01_listbox, scriptTemp["steps"])
+    global Script_editStatus, glbEPB_status
+    dictTemp = {
+        'totalCycles' : 1,
+        'steps' : [[0.5, glbEPB_status.EPB_off, glbSB_status.SB_release]]
+    }
+    Script_editStatus.script = dictTemp
+    Script_editStatus.totalCycles = 1
+    Script_editStatus.EPB_status = glbEPB_status.EPB_off
+    Script_editStatus.glbSB_status = glbSB_status.SB_release
+    Script_refreshWidgets()
 
 def Script_save():
     print("")
 
 
 def Script_addStep():
-    global scriptTemp
+    global Script_editStatus, glbEPB_status
     tempList = []
-    tempList = scriptTemp['steps']
-    tempList.append([0.5, EPB_status.EPB_release, SB_status.SB_release])
-    clearListBox(Mfm03_S1f02_S2f01_listbox)
-    readScriptToListbox(Mfm03_S1f02_S2f01_listbox, scriptTemp["steps"])
+    tempList = Script_editStatus.script['steps']
+    tempList.append([0.5, glbEPB_status.EPB_release, glbSB_status.SB_release])
+    Script_refreshWidgets()
 
 
 root.title("Brake Control System")
@@ -531,14 +554,14 @@ exitButton.pack(side=BOTTOM)
 
 # functions to execute after windows is loaded
 impoortedSteps = jsonHandle.loadScript()
-scriptTemp = impoortedSteps.copy()
+Script_read()
 
 ScriptInfo = clsScriptInfo(
     impoortedSteps['totalCycles'], 
     impoortedSteps['steps']
 )
 
-readScriptToListbox(Mfm02_S1f01_listbox, impoortedSteps["steps"])
-readScriptToListbox(Mfm03_S1f02_S2f01_listbox, scriptTemp["steps"])
+Auto_refreshWidgets()
+Script_refreshWidgets()
 
 root.mainloop()

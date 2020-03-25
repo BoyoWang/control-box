@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from classes import EPB_status as EPB_status, SB_status as SB_status
+from classes import glbEPB_status as glbEPB_status, glbSB_status as glbSB_status
 
 
 GPIO.setwarnings(False)
@@ -17,9 +17,9 @@ GPIO.setup(chan_list, GPIO.OUT)
 GPIO.output(chan_list, GPIO.LOW)
 
 
-def outputChange(EPB_cmd=None, SB_cmd=None, EPB_cur=EPB_status.EPB_off, SB_cur=SB_status.SB_release):
+def outputChange(EPB_cmd=None, SB_cmd=None, EPB_cur=glbEPB_status.EPB_off, SB_cur=glbSB_status.SB_release):
 
-    global EPB_status, SB_status
+    global glbEPB_status, glbSB_status
 
     # check the final state first
     if EPB_cmd is None:
@@ -33,19 +33,19 @@ def outputChange(EPB_cmd=None, SB_cmd=None, EPB_cur=EPB_status.EPB_off, SB_cur=S
         SB_cmd_final = SB_cmd
 
     # Assign the GPIO state for each port
-    if EPB_cmd_final == EPB_status.EPB_apply:
+    if EPB_cmd_final == glbEPB_status.EPB_apply:
         EPB_plusRelay = GPIO.HIGH
         EPB_minusRelay = GPIO.LOW
-    elif EPB_cmd_final == EPB_status.EPB_release:
+    elif EPB_cmd_final == glbEPB_status.EPB_release:
         EPB_plusRelay = GPIO.LOW
         EPB_minusRelay = GPIO.HIGH
-    elif EPB_cmd_final == EPB_status.EPB_off:
+    elif EPB_cmd_final == glbEPB_status.EPB_off:
         EPB_plusRelay = GPIO.LOW
         EPB_minusRelay = GPIO.LOW
 
-    if SB_cmd_final == SB_status.SB_apply:
+    if SB_cmd_final == glbSB_status.SB_apply:
         SB_relay = GPIO.HIGH
-    elif SB_cmd_final == SB_status.SB_release:
+    elif SB_cmd_final == glbSB_status.SB_release:
         SB_relay = GPIO.LOW
 
     # GPIO change execution

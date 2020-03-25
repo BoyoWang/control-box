@@ -9,7 +9,7 @@ class clsEPB_status():
         self.EPB_off = "EPB_off"
 
 
-EPB_status = clsEPB_status()
+glbEPB_status = clsEPB_status()
 
 class clsSB_status():
     def __init__(self):
@@ -17,14 +17,14 @@ class clsSB_status():
         self.SB_release = "SB_release"
 
 
-SB_status = clsSB_status()
+glbSB_status = clsSB_status()
 
 class clsEPB_SB_cmd_status():
     def __init__(self):
-        self.EPB_cur = EPB_status.EPB_off
-        self.SB_cur = SB_status.SB_release
-        self.EPB_cmd = EPB_status.EPB_off
-        self.SB_cmd = SB_status.SB_release
+        self.EPB_cur = glbEPB_status.EPB_off
+        self.SB_cur = glbSB_status.SB_release
+        self.EPB_cmd = glbEPB_status.EPB_off
+        self.SB_cmd = glbSB_status.SB_release
 
 EPB_SB_cmd_status = clsEPB_SB_cmd_status()
 
@@ -45,6 +45,20 @@ class clsAuto_cmd_Status():
 
 Auto_cmd_Status = clsAuto_cmd_Status()
 
+class clsScript_editStatus():
+    def __init__(self):
+        self.totalCycles = 1
+        self.EPB_status = glbEPB_status.EPB_off
+        self.glbSB_status = glbSB_status.SB_release
+        self.stepTime = 0.5
+        self.script = {
+            "totalCycles": 1,
+            "steps": [
+                [0.5, glbEPB_status.EPB_off, glbSB_status.SB_release]
+            ]
+        }
+
+Script_editStatus = clsScript_editStatus()
 
 root = Tk()
 

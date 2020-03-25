@@ -116,17 +116,17 @@ Auto_exitSignal = threading.Event()
 
 
 def Auto_cmdApply():
-    Auto_cmdCurrIsSame = (Auto_cmd_Status.status_cur ==
-                          Auto_cmd_Status.status_cmd)
+    Auto_cmdCurrIsSame = (glbAuto_cmd_Status.status_cur ==
+                          glbAuto_cmd_Status.status_cmd)
     if not (Auto_cmdCurrIsSame):  # Check if cmd is same as cur
-        Auto_cmd_Status.status_cur = Auto_cmd_Status.status_cmd
+        glbAuto_cmd_Status.status_cur = glbAuto_cmd_Status.status_cmd
         Auto_cmd_StatusIsRunning = (
-            Auto_cmd_Status.status_cmd == glbAutoStatus.running)
+            glbAuto_cmd_Status.status_cmd == glbAutoStatus.running)
         Auto_cmd_StatusIsContinuing = (
-            Auto_cmd_Status.status_cmd == glbAutoStatus.continuing)
+            glbAuto_cmd_Status.status_cmd == glbAutoStatus.continuing)
         if (Auto_cmd_StatusIsRunning or Auto_cmd_StatusIsContinuing):
             Auto_start(None)
-        print("Auto_cmd_Status changed to " + Auto_cmd_Status.status_cur)
+        print("glbAuto_cmd_Status changed to " + glbAuto_cmd_Status.status_cur)
 
 
 def Auto_refreshWidgets():
@@ -140,8 +140,8 @@ def Auto_refreshWidgets():
         " / " + str(ScriptInfo.totalSteps)
     
     isRunning = (
-        (Auto_cmd_Status.status_cur == glbAutoStatus.running) or 
-        (Auto_cmd_Status.status_cur == glbAutoStatus.continuing)
+        (glbAuto_cmd_Status.status_cur == glbAutoStatus.running) or 
+        (glbAuto_cmd_Status.status_cur == glbAutoStatus.continuing)
     )
     
     def BtnsStatusChange(normalOrDisabled):
@@ -154,7 +154,7 @@ def Auto_refreshWidgets():
     if isRunning:
         StartRadioText = "Running"
 
-    elif Auto_cmd_Status.status_cur == glbAutoStatus.finished:
+    elif glbAuto_cmd_Status.status_cur == glbAutoStatus.finished:
         StartRadioText = "Finished"
     else:
         StartRadioText = "Start"
@@ -189,9 +189,9 @@ def Auto_start(event):
 
     def Auto_cur_StatusIsRunningOrContinuing():
         Auto_cur_StatusIsRunning = (
-            Auto_cmd_Status.status_cur == glbAutoStatus.running)
+            glbAuto_cmd_Status.status_cur == glbAutoStatus.running)
         Auto_cur_StatusIsContinuing = (
-            Auto_cmd_Status.status_cur == glbAutoStatus.continuing)
+            glbAuto_cmd_Status.status_cur == glbAutoStatus.continuing)
         return (Auto_cur_StatusIsRunning or Auto_cur_StatusIsContinuing)
 
     def isLastCycleLastStep():
@@ -223,7 +223,7 @@ def Auto_start(event):
                     autoStep(steps[0], steps[1], steps[2])
 
             if isLastCycleLastStep():
-                Auto_cmd_Status.status_cur = glbAutoStatus.finished
+                glbAuto_cmd_Status.status_cur = glbAutoStatus.finished
 
             if Auto_exitSignal.is_set():
                 break
@@ -232,7 +232,7 @@ def Auto_start(event):
 
         if Auto_exitSignal.is_set():
             print("interrupeted!")
-            Auto_cmd_Status.status_cur = glbAutoStatus.pause
+            glbAuto_cmd_Status.status_cur = glbAutoStatus.pause
             autoFinish()
         else:
             autoFinish()
@@ -245,12 +245,12 @@ def Auto_start(event):
 
 
 def Auto_start_btn(event):
-    if Auto_cmd_Status.status_cur == glbAutoStatus.pause:
-        Auto_cmd_Status.status_cmd = glbAutoStatus.continuing
-    elif Auto_cmd_Status.status_cur == glbAutoStatus.finished:
-        Auto_cmd_Status.status_cmd = glbAutoStatus.finished
+    if glbAuto_cmd_Status.status_cur == glbAutoStatus.pause:
+        glbAuto_cmd_Status.status_cmd = glbAutoStatus.continuing
+    elif glbAuto_cmd_Status.status_cur == glbAutoStatus.finished:
+        glbAuto_cmd_Status.status_cmd = glbAutoStatus.finished
     else:
-        Auto_cmd_Status.status_cmd = glbAutoStatus.running
+        glbAuto_cmd_Status.status_cmd = glbAutoStatus.running
     Auto_cmdApply()
     Auto_refreshWidgets()
 
@@ -264,15 +264,15 @@ def Auto_quit(event):
 def Auto_reset():
 
     def checkAuto_cur_Status():
-        isInit = (Auto_cmd_Status.status_cur == glbAutoStatus.init)
-        isPause = (Auto_cmd_Status.status_cur == glbAutoStatus.pause)
-        isFinished = (Auto_cmd_Status.status_cur == glbAutoStatus.finished)
+        isInit = (glbAuto_cmd_Status.status_cur == glbAutoStatus.init)
+        isPause = (glbAuto_cmd_Status.status_cur == glbAutoStatus.pause)
+        isFinished = (glbAuto_cmd_Status.status_cur == glbAutoStatus.finished)
         return(isInit or isPause or isFinished)
 
     if checkAuto_cur_Status():
         ScriptInfo.currentCycle = 0
         ScriptInfo.currentStep = 0
-        Auto_cmd_Status.status_cmd = glbAutoStatus.init
+        glbAuto_cmd_Status.status_cmd = glbAutoStatus.init
         Auto_cmdApply()
         Auto_refreshWidgets()
     

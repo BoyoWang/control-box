@@ -43,7 +43,7 @@ class clsAuto_cmd_Status():
         self.status_cur = glbAutoStatus.init
         self.status_cmd = glbAutoStatus.init
 
-Auto_cmd_Status = clsAuto_cmd_Status()
+glbAuto_cmd_Status = clsAuto_cmd_Status()
 
 class clsScript_editStatus():
     def __init__(self):

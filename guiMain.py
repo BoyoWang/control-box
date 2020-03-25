@@ -97,19 +97,6 @@ def Manual_SB_onOff():
 
 # Automatic functions
 
-class clsScriptInfo():
-    def __init__(self,
-                 totalCycles=1,
-                 importedSteps=[[
-                     0.5,
-                     glbEPB_status.EPB_off,
-                     glbSB_status.SB_release
-                 ]]):
-        self.totalCycles = totalCycles
-        self.totalSteps = len(importedSteps)
-        self.steps = importedSteps
-        self.currentCycle = 0
-        self.currentStep = 0
 
 
 Auto_exitSignal = threading.Event()
@@ -132,12 +119,12 @@ def Auto_cmdApply():
 def Auto_refreshWidgets():
 
     Mfm02_S1f02_label["text"] = "Cycles : " + \
-        str(ScriptInfo.currentCycle) + \
-        " / " + str(ScriptInfo.totalCycles)
+        str(glbAuto_scriptInfo.currentCycle) + \
+        " / " + str(glbAuto_scriptInfo.totalCycles)
 
     Mfm02_S1f01_label["text"] = "Steps : " + \
-        str(ScriptInfo.currentStep) + \
-        " / " + str(ScriptInfo.totalSteps)
+        str(glbAuto_scriptInfo.currentStep) + \
+        " / " + str(glbAuto_scriptInfo.totalSteps)
     
     isRunning = (
         (glbAuto_cmd_Status.status_cur == glbAutoStatus.running) or 
@@ -166,9 +153,9 @@ def Auto_refreshWidgets():
     
     Mfm02_S1f02_startRadio["text"] = StartRadioText
     clearListBox(Mfm02_S1f01_listbox)
-    readScriptToListbox(Mfm02_S1f01_listbox, ScriptInfo.steps)
+    readScriptToListbox(Mfm02_S1f01_listbox, glbAuto_scriptInfo.steps)
     Mfm02_S1f01_listbox.selection_clear(0,END)
-    Mfm02_S1f01_listbox.selection_set(ScriptInfo.currentStep)
+    Mfm02_S1f01_listbox.selection_set(glbAuto_scriptInfo.currentStep)
 
 
 def Auto_start(event):
@@ -178,7 +165,7 @@ def Auto_start(event):
         glbEPB_SB_cmd_status.SB_cmd = SB
         EPB_SB_cmdApply()
 
-        print("step " + str(ScriptInfo.currentStep) + " : " +
+        print("step " + str(glbAuto_scriptInfo.currentStep) + " : " +
               str(time) + " s, " + "EPB : " + EPB + ", SB : " + SB)
         Auto_exitSignal.wait(time)
 
@@ -195,30 +182,30 @@ def Auto_start(event):
         return (Auto_cur_StatusIsRunning or Auto_cur_StatusIsContinuing)
 
     def isLastCycleLastStep():
-        ifLastCycle = (ScriptInfo.currentCycle == ScriptInfo.totalCycles)
-        ifLastStep = (ScriptInfo.currentStep == ScriptInfo.totalSteps)        
+        ifLastCycle = (glbAuto_scriptInfo.currentCycle == glbAuto_scriptInfo.totalCycles)
+        ifLastStep = (glbAuto_scriptInfo.currentStep == glbAuto_scriptInfo.totalSteps)        
         return ifLastCycle and ifLastStep
 
 
     def combineSteps():
         Auto_exitSignal.clear()
-        ScriptInfo.totalSteps = len(ScriptInfo.steps)
+        glbAuto_scriptInfo.totalSteps = len(glbAuto_scriptInfo.steps)
         while (Auto_cur_StatusIsRunningOrContinuing()):
 
             if not isLastCycleLastStep(): # check if last cycle last step
-                if (ScriptInfo.currentStep + 1) > ScriptInfo.totalSteps:
-                    ScriptInfo.currentStep = 0
-                if ScriptInfo.currentStep == 0:
-                    ScriptInfo.currentCycle += 1
+                if (glbAuto_scriptInfo.currentStep + 1) > glbAuto_scriptInfo.totalSteps:
+                    glbAuto_scriptInfo.currentStep = 0
+                if glbAuto_scriptInfo.currentStep == 0:
+                    glbAuto_scriptInfo.currentCycle += 1
 
-            startStep = ScriptInfo.currentStep
+            startStep = glbAuto_scriptInfo.currentStep
             Auto_refreshWidgets()
 
-            for steps in ScriptInfo.steps[startStep:]:
+            for steps in glbAuto_scriptInfo.steps[startStep:]:
                 if Auto_exitSignal.is_set():
                     break
                 else:
-                    ScriptInfo.currentStep += 1
+                    glbAuto_scriptInfo.currentStep += 1
                     Auto_refreshWidgets()
                     autoStep(steps[0], steps[1], steps[2])
 
@@ -270,8 +257,8 @@ def Auto_reset():
         return(isInit or isPause or isFinished)
 
     if checkAuto_cur_Status():
-        ScriptInfo.currentCycle = 0
-        ScriptInfo.currentStep = 0
+        glbAuto_scriptInfo.currentCycle = 0
+        glbAuto_scriptInfo.currentStep = 0
         glbAuto_cmd_Status.status_cmd = glbAutoStatus.init
         Auto_cmdApply()
         Auto_refreshWidgets()
@@ -284,7 +271,7 @@ def Script_refreshWidgets():
     global Script_editStatus,\
         Mfm03_S1f02_S2f02_S3f01_label,\
         Mfm03_S1f02_S2f02_S3f02_label,\
-        Mfm02_S1f01_listbox
+        Mfm03_S1f02_S2f01_listbox
 
     Mfm03_S1f02_S2f02_S3f01_label['text'] = "Cycle : " + \
         str(Script_editStatus.totalCycles)
@@ -297,11 +284,22 @@ def Script_refreshWidgets():
 
     
 def Script_read():
-    global Script_editStatus, Mfm03_S1f02_S2f01_listbox
-    Script_editStatus.script = jsonHandle.loadScript()
-    Script_editStatus.totalCycles = Script_editStatus.script['totalCycles']
-    clearListBox(Mfm03_S1f02_S2f01_listbox)
+    global Script_editStatus, \
+        glbAuto_scriptInfo, \
+        Mfm03_S1f02_S2f01_listbox, \
+        Mfm02_S1f01_listbox
+    
+    dictTemp = jsonHandle.loadScript()
+
+    Script_editStatus.script = dictTemp
+    Script_editStatus.totalCycles = dictTemp['totalCycles']
+
+    glbAuto_scriptInfo.script = dictTemp
+    glbAuto_scriptInfo.totalCycles = dictTemp['totalCycles']
+    glbAuto_scriptInfo.steps = dictTemp['steps']
+
     Script_refreshWidgets()
+    Auto_refreshWidgets()
 
 def Script_clear():
     global Script_editStatus, glbEPB_status
@@ -553,13 +551,8 @@ exitButton.pack(side=BOTTOM)
 
 
 # functions to execute after windows is loaded
-impoortedSteps = jsonHandle.loadScript()
 Script_read()
 
-ScriptInfo = clsScriptInfo(
-    impoortedSteps['totalCycles'], 
-    impoortedSteps['steps']
-)
 
 Auto_refreshWidgets()
 Script_refreshWidgets()

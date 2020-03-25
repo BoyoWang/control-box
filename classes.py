@@ -45,6 +45,23 @@ class clsAuto_cmd_Status():
 
 glbAuto_cmd_Status = clsAuto_cmd_Status()
 
+class clsAuto_scriptInfo():
+    def __init__(self):
+        self.totalCycles = 1
+        self.totalSteps = 1
+        self.steps = [[0.5, glbEPB_status.EPB_off, glbSB_status.SB_release]]
+        self.script = {
+            "totalCycles": 1,
+            "steps": [
+                [0.5, glbEPB_status.EPB_off, glbSB_status.SB_release]
+            ]
+        }
+        self.currentCycle = 0
+        self.currentStep = 0
+
+glbAuto_scriptInfo = clsAuto_scriptInfo()
+
+
 class clsScript_editStatus():
     def __init__(self):
         self.totalCycles = 1

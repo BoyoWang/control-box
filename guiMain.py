@@ -43,6 +43,14 @@ def readScriptToListbox(listbox, steps):
 def clearListBox(listbox):
     listbox.delete(0, END)
 
+def testAnythingHere(event):
+    global Script_editStatus, glbEPB_status, Mfm03_S1f02_S2f01_listbox
+    listBoxIsSelected = (
+        len(Mfm03_S1f02_S2f01_listbox.curselection()) == 1)
+    print(listBoxIsSelected)
+    if listBoxIsSelected:
+        listBoxSelectedIndex = Mfm03_S1f02_S2f01_listbox.curselection()[0]
+        print(listBoxSelectedIndex)
 
 def exitProgram(event):
     print("Exit Button pressed")
@@ -314,7 +322,8 @@ def Script_clear():
     Script_refreshWidgets()
 
 def Script_save():
-    print("")
+    jsonHandle.saveScript(Script_editStatus.script)
+    Script_read()
 
 def Script_cycleModBtns(mode):
     global Script_editStatus, rValueFrm0302020101
@@ -330,6 +339,7 @@ def Script_cycleModBtns(mode):
     if Script_editStatus.totalCycles < 1:
         Script_editStatus.totalCycles = 1
 
+    Script_editStatus.script['totalCycles'] = Script_editStatus.totalCycles
     Script_refreshWidgets()
 
 
@@ -346,19 +356,46 @@ def Script_timeModBtns(mode):
 
     if Script_editStatus.stepTime < 0.01:
         Script_editStatus.stepTime = 0.01
+    
+    Script_editStatus.stepTime = round(Script_editStatus.stepTime, 2)
 
     Script_refreshWidgets()
 
 
 def Script_addStep():
-    global Script_editStatus, glbEPB_status
+    global Script_editStatus, glbEPB_status, Mfm03_S1f02_S2f01_listbox
+    
+    listBoxIsSelected = (
+        len(Mfm03_S1f02_S2f01_listbox.curselection()) == 1)
+    if listBoxIsSelected:
+        listBoxSelectedIndex = Mfm03_S1f02_S2f01_listbox.curselection()[0]
+
     stepTime = Script_editStatus.stepTime
     EPB = rValueFrm03020203_1.get()
     SB = rValueFrm03020203_2.get()
     tempList = Script_editStatus.script['steps']
-    tempList.append([stepTime, EPB, SB])
+    if listBoxIsSelected:
+        tempList.insert(listBoxSelectedIndex, [stepTime, EPB, SB])
+    else:
+        tempList.append([stepTime, EPB, SB])
     Script_refreshWidgets()
 
+def Script_delStep():
+    global Script_editStatus, Mfm03_S1f02_S2f01_listbox
+
+    listBoxIsSelected = (
+        len(Mfm03_S1f02_S2f01_listbox.curselection()) == 1)
+    if listBoxIsSelected:
+        listBoxSelectedIndex = Mfm03_S1f02_S2f01_listbox.curselection()[0]
+
+    steps = Script_editStatus.script['steps']
+    stepAmt = len(steps)
+
+    if listBoxIsSelected and (stepAmt > 1):
+        steps.pop(listBoxSelectedIndex-1)
+    elif stepAmt > 1:
+        steps.pop(-1)
+    Script_refreshWidgets()
 
 root.title("Brake Control System")
 
@@ -564,9 +601,11 @@ Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio.grid(row=2, column=3)
 # add / delete step
 Mfm03_S1f02_S2f02_S3f04 = SubFrames3(Mfm03_S1f02_S2f02)
 Mfm03_S1f02_S2f02_S3f04_addBtn = MainButtons(
-    Mfm03_S1f02_S2f02_S3f04, text="Add", command=Script_addStep)
+    Mfm03_S1f02_S2f02_S3f04, text="Add", 
+        command=Script_addStep)
 Mfm03_S1f02_S2f02_S3f04_deleteBtn = MainButtons(
-    Mfm03_S1f02_S2f02_S3f04, text="delete")
+    Mfm03_S1f02_S2f02_S3f04, text="delete", 
+        command=Script_delStep)
 
 
 root.wm_geometry("800x600")
@@ -591,6 +630,10 @@ Mfm01.show()
 exitButton = Button(root, text="Exit", font=myFont, height=2, width=6)
 exitButton.bind('<Button-1>', exitProgram)
 exitButton.pack(side=BOTTOM)
+
+testButton = Button(root, text="Test", font=myFont, height=2, width=6)
+testButton.bind('<Button-1>', testAnythingHere)
+testButton.pack(side=BOTTOM)
 
 
 # functions to execute after windows is loaded

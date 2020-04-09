@@ -9,6 +9,7 @@ import jsonHandle as jsonHandle
 
 # General functions
 
+
 def readScriptToListbox(listbox, steps):
 
     def EPB_statusTrans(statusInput):
@@ -24,8 +25,7 @@ def readScriptToListbox(listbox, steps):
             return " + "
         elif statusInput == glbSB_status.SB_release:
             return " - "
-    
-    
+
     headerText = "ID|EPB|SB |T"
 
     listbox.insert(END, headerText)
@@ -43,6 +43,7 @@ def readScriptToListbox(listbox, steps):
 def clearListBox(listbox):
     listbox.delete(0, END)
 
+
 def testAnythingHere(event):
     global Script_editStatus, glbEPB_status, Mfm03_S1f02_S2f01_listbox
     listBoxIsSelected = (
@@ -52,6 +53,7 @@ def testAnythingHere(event):
         listBoxSelectedIndex = Mfm03_S1f02_S2f01_listbox.curselection()[0]
         print(listBoxSelectedIndex)
 
+
 def exitProgram(event):
     print("Exit Button pressed")
     GPIO_functions.cleanup()
@@ -60,14 +62,17 @@ def exitProgram(event):
 
 # Manual functions
 
+
 def EPB_SB_cmdApply():
-    EPB_cmdCurrIsSame = (glbEPB_SB_cmd_status.EPB_cur == glbEPB_SB_cmd_status.EPB_cmd)
-    SB_cmdCurrIsSame = (glbEPB_SB_cmd_status.SB_cur == glbEPB_SB_cmd_status.SB_cmd)
+    EPB_cmdCurrIsSame = (glbEPB_SB_cmd_status.EPB_cur ==
+                         glbEPB_SB_cmd_status.EPB_cmd)
+    SB_cmdCurrIsSame = (glbEPB_SB_cmd_status.SB_cur ==
+                        glbEPB_SB_cmd_status.SB_cmd)
     if not (EPB_cmdCurrIsSame and SB_cmdCurrIsSame):  # Check if cmd is same as cur
         GPIO_functions.outputChange(
-            glbEPB_SB_cmd_status.EPB_cmd, 
-            glbEPB_SB_cmd_status.SB_cmd, 
-            glbEPB_SB_cmd_status.EPB_cur, 
+            glbEPB_SB_cmd_status.EPB_cmd,
+            glbEPB_SB_cmd_status.SB_cmd,
+            glbEPB_SB_cmd_status.EPB_cur,
             glbEPB_SB_cmd_status.SB_cur
         )
         glbEPB_SB_cmd_status.EPB_cur = glbEPB_SB_cmd_status.EPB_cmd
@@ -94,6 +99,16 @@ def ManualPowerOff(event):
     print("Off")
 
 
+def radioDirectSwitch():
+    dummy = ""
+    if rValueApplyRelease.get() == "Apply":
+        manualPowerOn(dummy)
+    elif rValueApplyRelease.get() == "Release":
+        manualPowerOn(dummy)
+    elif rValueApplyRelease.get() == "Off":
+        ManualPowerOff(dummy)
+
+
 def Manual_SB_onOff():
     if SB_rValueApplyRelease.get() == "SB_apply":
         glbEPB_SB_cmd_status.SB_cmd = glbSB_status.SB_apply
@@ -104,7 +119,6 @@ def Manual_SB_onOff():
 
 
 # Automatic functions
-
 
 
 Auto_exitSignal = threading.Event()
@@ -133,12 +147,12 @@ def Auto_refreshWidgets():
     Mfm02_S1f01_label["text"] = "Steps : " + \
         str(glbAuto_scriptInfo.currentStep) + \
         " / " + str(glbAuto_scriptInfo.totalSteps)
-    
+
     isRunning = (
-        (glbAuto_cmd_Status.status_cur == glbAutoStatus.running) or 
+        (glbAuto_cmd_Status.status_cur == glbAutoStatus.running) or
         (glbAuto_cmd_Status.status_cur == glbAutoStatus.continuing)
     )
-    
+
     def BtnsStatusChange(normalOrDisabled):
         Nfn01_Mfm01SelectRadio["state"] = normalOrDisabled
         Nfn01_Mfm02SelectRadio["state"] = normalOrDisabled
@@ -153,16 +167,16 @@ def Auto_refreshWidgets():
         StartRadioText = "Finished"
     else:
         StartRadioText = "Start"
-    
+
     if isRunning:
         BtnsStatusChange(DISABLED)
     else:
         BtnsStatusChange(NORMAL)
-    
+
     Mfm02_S1f02_startRadio["text"] = StartRadioText
     clearListBox(Mfm02_S1f01_listbox)
     readScriptToListbox(Mfm02_S1f01_listbox, glbAuto_scriptInfo.steps)
-    Mfm02_S1f01_listbox.selection_clear(0,END)
+    Mfm02_S1f01_listbox.selection_clear(0, END)
     Mfm02_S1f01_listbox.selection_set(glbAuto_scriptInfo.currentStep)
 
 
@@ -190,17 +204,18 @@ def Auto_start(event):
         return (Auto_cur_StatusIsRunning or Auto_cur_StatusIsContinuing)
 
     def isLastCycleLastStep():
-        ifLastCycle = (glbAuto_scriptInfo.currentCycle == glbAuto_scriptInfo.totalCycles)
-        ifLastStep = (glbAuto_scriptInfo.currentStep == glbAuto_scriptInfo.totalSteps)        
+        ifLastCycle = (glbAuto_scriptInfo.currentCycle ==
+                       glbAuto_scriptInfo.totalCycles)
+        ifLastStep = (glbAuto_scriptInfo.currentStep ==
+                      glbAuto_scriptInfo.totalSteps)
         return ifLastCycle and ifLastStep
-
 
     def combineSteps():
         Auto_exitSignal.clear()
         glbAuto_scriptInfo.totalSteps = len(glbAuto_scriptInfo.steps)
         while (Auto_cur_StatusIsRunningOrContinuing()):
 
-            if not isLastCycleLastStep(): # check if last cycle last step
+            if not isLastCycleLastStep():  # check if last cycle last step
                 if (glbAuto_scriptInfo.currentStep + 1) > glbAuto_scriptInfo.totalSteps:
                     glbAuto_scriptInfo.currentStep = 0
                 if glbAuto_scriptInfo.currentStep == 0:
@@ -270,10 +285,11 @@ def Auto_reset():
         glbAuto_cmd_Status.status_cmd = glbAutoStatus.init
         Auto_cmdApply()
         Auto_refreshWidgets()
-    
+
     Mfm02_S1f02_stopRadio.select()
 
 # script functions
+
 
 def Script_refreshWidgets():
     global Script_editStatus,\
@@ -283,20 +299,21 @@ def Script_refreshWidgets():
 
     Mfm03_S1f02_S2f02_S3f01_label['text'] = "Cycle : " + \
         str(Script_editStatus.totalCycles)
-    
+
     Mfm03_S1f02_S2f02_S3f02_label['text'] = "Time : " + \
         str(Script_editStatus.stepTime) + " s"
 
     clearListBox(Mfm03_S1f02_S2f01_listbox)
-    readScriptToListbox(Mfm03_S1f02_S2f01_listbox, Script_editStatus.script["steps"])
+    readScriptToListbox(Mfm03_S1f02_S2f01_listbox,
+                        Script_editStatus.script["steps"])
 
-    
+
 def Script_read():
     global Script_editStatus, \
         glbAuto_scriptInfo, \
         Mfm03_S1f02_S2f01_listbox, \
         Mfm02_S1f01_listbox
-    
+
     dictTemp = jsonHandle.loadScript()
 
     Script_editStatus.script = dictTemp
@@ -309,11 +326,12 @@ def Script_read():
     Script_refreshWidgets()
     Auto_refreshWidgets()
 
+
 def Script_clear():
     global Script_editStatus, glbEPB_status
     dictTemp = {
-        'totalCycles' : 1,
-        'steps' : [[0.5, glbEPB_status.EPB_off, glbSB_status.SB_release]]
+        'totalCycles': 1,
+        'steps': [[0.5, glbEPB_status.EPB_off, glbSB_status.SB_release]]
     }
     Script_editStatus.script = dictTemp
     Script_editStatus.totalCycles = 1
@@ -321,14 +339,16 @@ def Script_clear():
     Script_editStatus.glbSB_status = glbSB_status.SB_release
     Script_refreshWidgets()
 
+
 def Script_save():
     jsonHandle.saveScript(Script_editStatus.script)
     Script_read()
 
+
 def Script_cycleModBtns(mode):
     global Script_editStatus, rValueFrm0302020101
     temp = rValueFrm0302020101.get()
-    
+
     if mode == "plus":
         Script_editStatus.totalCycles += temp
     elif mode == "minus":
@@ -346,7 +366,7 @@ def Script_cycleModBtns(mode):
 def Script_timeModBtns(mode):
     global Script_editStatus, rValueFrm0302020201
     temp = rValueFrm0302020201.get()
-    
+
     if mode == "plus":
         Script_editStatus.stepTime += temp
     elif mode == "minus":
@@ -356,7 +376,7 @@ def Script_timeModBtns(mode):
 
     if Script_editStatus.stepTime < 0.01:
         Script_editStatus.stepTime = 0.01
-    
+
     Script_editStatus.stepTime = round(Script_editStatus.stepTime, 2)
 
     Script_refreshWidgets()
@@ -364,7 +384,7 @@ def Script_timeModBtns(mode):
 
 def Script_addStep():
     global Script_editStatus, glbEPB_status, Mfm03_S1f02_S2f01_listbox
-    
+
     listBoxIsSelected = (
         len(Mfm03_S1f02_S2f01_listbox.curselection()) == 1)
     if listBoxIsSelected:
@@ -379,6 +399,7 @@ def Script_addStep():
     else:
         tempList.append([stepTime, EPB, SB])
     Script_refreshWidgets()
+
 
 def Script_delStep():
     global Script_editStatus, Mfm03_S1f02_S2f01_listbox
@@ -397,6 +418,7 @@ def Script_delStep():
         steps.pop(-1)
     Script_refreshWidgets()
 
+
 root.title("Brake Control System")
 
 # NaviFrame 01
@@ -412,26 +434,28 @@ Mfm01 = MainFrames(root)
 Mfm01_S1f01 = SubFrames1(Mfm01)
 Mfm01_S1f01_applyReleaseLable = MainLables(
     Mfm01_S1f01, text="EPB apply / release:")
-Mfm01_S1f01_EPBonOffButton = MainButtons(Mfm01_S1f01, text="Off")
-Mfm01_S1f01_EPBonOffButton.bind('<ButtonRelease-1>', ManualPowerOff)
-Mfm01_S1f01_EPBonOffButton.bind('<Button>', manualPowerOn)
 Mfm01_S1f01_EPB_applyRadio = MainRadios(
-    Mfm01_S1f01, text="Apply", variable=rValueApplyRelease, value="Apply")
-Mfm01_S1f01_EPB_applyRadio.select()
+    Mfm01_S1f01, text="Apply", command=radioDirectSwitch,
+    variable=rValueApplyRelease, value="Apply")
+Mfm01_S1f01_EPB_offRadio = MainRadios(
+    Mfm01_S1f01, text="Off", command=radioDirectSwitch,
+    variable=rValueApplyRelease, value="Off")
+Mfm01_S1f01_EPB_offRadio.select()
 Mfm01_S1f01_EPB_releaseRadio = MainRadios(
-    Mfm01_S1f01, text="Release", variable=rValueApplyRelease, value="Release")
+    Mfm01_S1f01, text="Release", command=radioDirectSwitch,
+    variable=rValueApplyRelease, value="Release")
 
 # MainFrame 01 - SubFrames1 02 : Survice Brake Control Frame
 Mfm01_S1f02 = SubFrames1(Mfm01)
 Mfm01_S1f02_applyReleaseLable = MainLables(
     Mfm01_S1f02, text="Service brake apply / release:")
 Mfm01_S1f02_SB_applyRadio = MainRadios(
-    Mfm01_S1f02, text="SB_apply", 
-    variable=SB_rValueApplyRelease, value="SB_apply", 
+    Mfm01_S1f02, text="SB_apply",
+    variable=SB_rValueApplyRelease, value="SB_apply",
     command=Manual_SB_onOff)
 Mfm01_S1f02_SB_releaseRadio = MainRadios(
-    Mfm01_S1f02, text="SB_release", 
-    variable=SB_rValueApplyRelease, value="SB_release", 
+    Mfm01_S1f02, text="SB_release",
+    variable=SB_rValueApplyRelease, value="SB_release",
     command=Manual_SB_onOff)
 Mfm01_S1f02_SB_releaseRadio.select()
 
@@ -450,13 +474,13 @@ Mfm02_S1f02.pack(fill=NONE, side=LEFT)
 Mfm02_S1f02_label = MainLables(Mfm02_S1f02, text="Cycle : 0 / 0")
 Mfm02_S1f02_label.pack(fill=Y)
 Mfm02_S1f02_startRadio = MainRadios(
-    Mfm02_S1f02, text="Start", variable=rValueAutoStartStop, 
-    value="start", indicatoron=0, 
+    Mfm02_S1f02, text="Start", variable=rValueAutoStartStop,
+    value="start", indicatoron=0,
     command=lambda: Auto_start_btn(None)
 )
 Mfm02_S1f02_stopRadio = MainRadios(
-    Mfm02_S1f02, text="Stop", variable=rValueAutoStartStop, 
-    value="stop", indicatoron=0, 
+    Mfm02_S1f02, text="Stop", variable=rValueAutoStartStop,
+    value="stop", indicatoron=0,
     command=lambda: Auto_quit(None)
 )
 Mfm02_S1f02_stopRadio.select()
@@ -468,12 +492,12 @@ Mfm03 = MainFrames(root)
 
 # MainFrame 03 - SubFrames1 01 : Read / Clear / Save
 Mfm03_S1f01 = SubFrames1(Mfm03)
-Mfm03_S1f01_readButton = MainButtons(Mfm03_S1f01, text="Read", 
-    command=Script_read)
-Mfm03_S1f01_clearButton = MainButtons(Mfm03_S1f01, text="Clear", 
-    command=Script_clear)
-Mfm03_S1f01_saveButton = MainButtons(Mfm03_S1f01, text="Save", 
-    command=Script_save)
+Mfm03_S1f01_readButton = MainButtons(Mfm03_S1f01, text="Read",
+                                     command=Script_read)
+Mfm03_S1f01_clearButton = MainButtons(Mfm03_S1f01, text="Clear",
+                                      command=Script_clear)
+Mfm03_S1f01_saveButton = MainButtons(Mfm03_S1f01, text="Save",
+                                     command=Script_save)
 
 # MainFrame 03 - SubFrames1 02 : Script Editor Main
 Mfm03_S1f02 = SubFrames1(Mfm03)
@@ -494,13 +518,13 @@ Mfm03_S1f02_S2f02_S3f01_label = MainLables(
 Mfm03_S1f02_S2f02_S3f01_S4f01 = SubFrames4(Mfm03_S1f02_S2f02_S3f01)
 
 Mfm03_S1f02_S2f02_S3f01_S4f01_100Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="100", 
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="100",
     variable=rValueFrm0302020101, value="100")
 Mfm03_S1f02_S2f02_S3f01_S4f01_10Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="10", 
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="10",
     variable=rValueFrm0302020101, value="10")
 Mfm03_S1f02_S2f02_S3f01_S4f01_1Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f01_S4f01, text="1", 
+    Mfm03_S1f02_S2f02_S3f01_S4f01, text="1",
     variable=rValueFrm0302020101, value="1")
 Mfm03_S1f02_S2f02_S3f01_S4f01_1Radio.select()
 
@@ -529,19 +553,19 @@ Mfm03_S1f02_S2f02_S3f02_label = MainLables(
 Mfm03_S1f02_S2f02_S3f02_S4f01 = SubFrames4(Mfm03_S1f02_S2f02_S3f02)
 
 Mfm03_S1f02_S2f02_S3f02_S4f01_100Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="100", 
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="100",
     variable=rValueFrm0302020201, value=100)
 Mfm03_S1f02_S2f02_S3f02_S4f01_10Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="10", 
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="10",
     variable=rValueFrm0302020201, value=10)
 Mfm03_S1f02_S2f02_S3f02_S4f01_1Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="1", 
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="1",
     variable=rValueFrm0302020201, value=1)
 Mfm03_S1f02_S2f02_S3f02_S4f01_01Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="0.1", 
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="0.1",
     variable=rValueFrm0302020201, value=0.1)
 Mfm03_S1f02_S2f02_S3f02_S4f01_001Radio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f02_S4f01, text="0.01", 
+    Mfm03_S1f02_S2f02_S3f02_S4f01, text="0.01",
     variable=rValueFrm0302020201, value=0.01)
 Mfm03_S1f02_S2f02_S3f02_S4f01_1Radio.select()
 
@@ -564,27 +588,27 @@ Mfm03_S1f02_S2f02_S3f02_S4f01_plusBtn.grid(row=2, column=1)
 Mfm03_S1f02_S2f02_S3f02_S4f01_resetBtn.grid(row=2, column=2)
 Mfm03_S1f02_S2f02_S3f02_S4f01_minusBtn.grid(row=2, column=3)
 
-# MainFrame 03 - SubFrames1 02 - SubFrames2 02 - SubFrames3 03 : 
+# MainFrame 03 - SubFrames1 02 - SubFrames2 02 - SubFrames3 03 :
 # EPB / SB status selector
 Mfm03_S1f02_S2f02_S3f03 = SubFrames3(Mfm03_S1f02_S2f02)
 Mfm03_S1f02_S2f02_S3f03_EPBLabel = Label(Mfm03_S1f02_S2f02_S3f03, text="EPB :")
 Mfm03_S1f02_S2f02_S3f03_EPBApplyRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Apply", 
+    Mfm03_S1f02_S2f02_S3f03, text="Apply",
     variable=rValueFrm03020203_1, value=glbEPB_status.EPB_apply)
 Mfm03_S1f02_S2f02_S3f03_EPBReleaseRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Release", 
+    Mfm03_S1f02_S2f02_S3f03, text="Release",
     variable=rValueFrm03020203_1, value=glbEPB_status.EPB_release)
 Mfm03_S1f02_S2f02_S3f03_EPBOffRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Off", 
+    Mfm03_S1f02_S2f02_S3f03, text="Off",
     variable=rValueFrm03020203_1, value=glbEPB_status.EPB_off)
 Mfm03_S1f02_S2f02_S3f03_EPBOffRadio.select()
 
 Mfm03_S1f02_S2f02_S3f03_SBLabel = Label(Mfm03_S1f02_S2f02_S3f03, text="SB :")
 Mfm03_S1f02_S2f02_S3f03_SBApplyRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Apply", 
+    Mfm03_S1f02_S2f02_S3f03, text="Apply",
     variable=rValueFrm03020203_2, value=glbSB_status.SB_apply)
 Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio = Radiobutton(
-    Mfm03_S1f02_S2f02_S3f03, text="Release", 
+    Mfm03_S1f02_S2f02_S3f03, text="Release",
     variable=rValueFrm03020203_2, value=glbSB_status.SB_release)
 Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio.select()
 
@@ -597,15 +621,15 @@ Mfm03_S1f02_S2f02_S3f03_SBLabel.grid(row=2, column=1)
 Mfm03_S1f02_S2f02_S3f03_SBApplyRadio.grid(row=2, column=2)
 Mfm03_S1f02_S2f02_S3f03_SBReleaseRadio.grid(row=2, column=3)
 
-# MainFrame 03 - SubFrames1 02 - SubFrames2 02 - SubFrames3 04 : 
+# MainFrame 03 - SubFrames1 02 - SubFrames2 02 - SubFrames3 04 :
 # add / delete step
 Mfm03_S1f02_S2f02_S3f04 = SubFrames3(Mfm03_S1f02_S2f02)
 Mfm03_S1f02_S2f02_S3f04_addBtn = MainButtons(
-    Mfm03_S1f02_S2f02_S3f04, text="Add", 
-        command=Script_addStep)
+    Mfm03_S1f02_S2f02_S3f04, text="Add",
+    command=Script_addStep)
 Mfm03_S1f02_S2f02_S3f04_deleteBtn = MainButtons(
-    Mfm03_S1f02_S2f02_S3f04, text="delete", 
-        command=Script_delStep)
+    Mfm03_S1f02_S2f02_S3f04, text="delete",
+    command=Script_delStep)
 
 
 root.wm_geometry("800x600")
@@ -615,13 +639,13 @@ Mfm02.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 Mfm03.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 
 Nfn01_Mfm01SelectRadio = NfnRadios(
-    Nfn01, text="Manual", 
+    Nfn01, text="Manual",
     variable=MfmSelection, value="Mfm01", command=Mfm01.lift)
 Nfn01_Mfm02SelectRadio = NfnRadios(
-    Nfn01, text="Automatic", 
+    Nfn01, text="Automatic",
     variable=MfmSelection, value="Mfm02", command=Mfm02.lift)
 Nfn01_Mfm03SelectRadio = NfnRadios(
-    Nfn01, text="Script", 
+    Nfn01, text="Script",
     variable=MfmSelection, value="Mfm03", command=Mfm03.lift)
 Nfn01_Mfm01SelectRadio.select()
 
@@ -631,9 +655,9 @@ exitButton = Button(root, text="Exit", font=myFont, height=2, width=6)
 exitButton.bind('<Button-1>', exitProgram)
 exitButton.pack(side=BOTTOM)
 
-testButton = Button(root, text="Test", font=myFont, height=2, width=6)
-testButton.bind('<Button-1>', testAnythingHere)
-testButton.pack(side=BOTTOM)
+# testButton = Button(root, text="Test", font=myFont, height=2, width=6)
+# testButton.bind('<Button-1>', testAnythingHere)
+# testButton.pack(side=BOTTOM)
 
 
 # functions to execute after windows is loaded

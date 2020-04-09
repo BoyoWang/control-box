@@ -435,28 +435,29 @@ Mfm01_S1f01 = SubFrames1(Mfm01)
 Mfm01_S1f01_applyReleaseLable = MainLables(
     Mfm01_S1f01, text="EPB apply / release:")
 Mfm01_S1f01_EPB_applyRadio = MainRadios(
-    Mfm01_S1f01, text="Apply", command=radioDirectSwitch,
-    variable=rValueApplyRelease, value="Apply")
+    Mfm01_S1f01, text="Apply", command=radioDirectSwitch, indicatoron=0,
+    variable=rValueApplyRelease, value="Apply", width=7, height=2)
 Mfm01_S1f01_EPB_offRadio = MainRadios(
-    Mfm01_S1f01, text="Off", command=radioDirectSwitch,
-    variable=rValueApplyRelease, value="Off")
+    Mfm01_S1f01, text="Off", command=radioDirectSwitch, indicatoron=0,
+    variable=rValueApplyRelease, value="Off", width=7, height=2)
 Mfm01_S1f01_EPB_offRadio.select()
 Mfm01_S1f01_EPB_releaseRadio = MainRadios(
-    Mfm01_S1f01, text="Release", command=radioDirectSwitch,
-    variable=rValueApplyRelease, value="Release")
+    Mfm01_S1f01, text="Release", command=radioDirectSwitch, indicatoron=0,
+    variable=rValueApplyRelease, value="Release", width=7, height=2)
+
 
 # MainFrame 01 - SubFrames1 02 : Survice Brake Control Frame
 Mfm01_S1f02 = SubFrames1(Mfm01)
 Mfm01_S1f02_applyReleaseLable = MainLables(
     Mfm01_S1f02, text="Service brake apply / release:")
 Mfm01_S1f02_SB_applyRadio = MainRadios(
-    Mfm01_S1f02, text="SB_apply",
+    Mfm01_S1f02, text="SB_apply", indicatoron=0,
     variable=SB_rValueApplyRelease, value="SB_apply",
-    command=Manual_SB_onOff)
+    command=Manual_SB_onOff, width=11, height=2)
 Mfm01_S1f02_SB_releaseRadio = MainRadios(
-    Mfm01_S1f02, text="SB_release",
+    Mfm01_S1f02, text="SB_release", indicatoron=0,
     variable=SB_rValueApplyRelease, value="SB_release",
-    command=Manual_SB_onOff)
+    command=Manual_SB_onOff, width=11, height=2)
 Mfm01_S1f02_SB_releaseRadio.select()
 
 # MainFrame 02 : Automatic control
@@ -639,13 +640,13 @@ Mfm02.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 Mfm03.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 
 Nfn01_Mfm01SelectRadio = NfnRadios(
-    Nfn01, text="Manual",
+    Nfn01, text="Manual", width=11,
     variable=MfmSelection, value="Mfm01", command=Mfm01.lift)
 Nfn01_Mfm02SelectRadio = NfnRadios(
-    Nfn01, text="Automatic",
+    Nfn01, text="Automatic", width=11,
     variable=MfmSelection, value="Mfm02", command=Mfm02.lift)
 Nfn01_Mfm03SelectRadio = NfnRadios(
-    Nfn01, text="Script",
+    Nfn01, text="Script", width=11,
     variable=MfmSelection, value="Mfm03", command=Mfm03.lift)
 Nfn01_Mfm01SelectRadio.select()
 

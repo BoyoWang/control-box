@@ -1,6 +1,7 @@
 from Tkinter import *
 import tkFont
 
+
 class clsEPB_status():
     def __init__(self):
 
@@ -11,6 +12,7 @@ class clsEPB_status():
 
 glbEPB_status = clsEPB_status()
 
+
 class clsSB_status():
     def __init__(self):
         self.SB_apply = "SB_apply"
@@ -19,6 +21,7 @@ class clsSB_status():
 
 glbSB_status = clsSB_status()
 
+
 class clsEPB_SB_cmd_status():
     def __init__(self):
         self.EPB_cur = glbEPB_status.EPB_off
@@ -26,7 +29,9 @@ class clsEPB_SB_cmd_status():
         self.EPB_cmd = glbEPB_status.EPB_off
         self.SB_cmd = glbSB_status.SB_release
 
+
 glbEPB_SB_cmd_status = clsEPB_SB_cmd_status()
+
 
 class clsAutoStatus():
     def __init__(self):
@@ -36,14 +41,18 @@ class clsAutoStatus():
         self.continuing = "continuing"
         self.finished = "finished"
 
+
 glbAutoStatus = clsAutoStatus()
+
 
 class clsAuto_cmd_Status():
     def __init__(self):
         self.status_cur = glbAutoStatus.init
         self.status_cmd = glbAutoStatus.init
 
+
 glbAuto_cmd_Status = clsAuto_cmd_Status()
+
 
 class clsAuto_scriptInfo():
     def __init__(self):
@@ -58,6 +67,7 @@ class clsAuto_scriptInfo():
         }
         self.currentCycle = 0
         self.currentStep = 0
+
 
 glbAuto_scriptInfo = clsAuto_scriptInfo()
 
@@ -75,6 +85,7 @@ class clsScript_editStatus():
             ]
         }
 
+
 Script_editStatus = clsScript_editStatus()
 
 root = Tk()
@@ -82,8 +93,8 @@ root = Tk()
 
 myFont = tkFont.Font(family='Helvetica', size=20, weight='bold')
 btnFont = tkFont.Font(family='Helvetica', size=20, weight='bold')
-radioFont = tkFont.Font(family='Helvetica', size=18, weight='bold')
-nfnRadioFont = tkFont.Font(family='Helvetica', size=10, weight='bold')
+radioFont = tkFont.Font(family='Helvetica', size=50, weight='bold')
+nfnRadioFont = tkFont.Font(family='Helvetica', size=30, weight='bold')
 labelFont = tkFont.Font(family='Helvetica', size=18, weight='bold')
 listboxFont = tkFont.Font(family='Consolas', size=8)
 
@@ -179,7 +190,7 @@ class MainRadios(Radiobutton):
     def __init__(self, *args, **kwargs):
         Radiobutton.__init__(self, *args, **kwargs)
         self["font"] = radioFont
-        self.pack(anchor=W)
+        self.pack(side=LEFT, anchor=W)
 
 
 class MainLables(Label):
